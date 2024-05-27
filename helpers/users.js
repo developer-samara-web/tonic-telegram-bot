@@ -38,7 +38,7 @@ const AddUser = (ctx, id, name) => {
 
 // Save Users
 const SaveUsers = (ctx, user) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
         fs.writeFileSync('./users/users.json', JSON.stringify(user, null, 4))
 
@@ -72,12 +72,11 @@ const RemoveUser = (ctx, id) => {
 
 // Grant Access
 const GrantAccess = (ctx, id, name) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
         const update = list
         update.push({ id, name });
-
-        SaveUsers(list, update);
+        SaveUsers(ctx, update);
 
         LOG(username, 'Helpers/Users/GrantAccess')
         return true
@@ -88,7 +87,7 @@ const GrantAccess = (ctx, id, name) => {
 };
 
 // Deny Access
-const DenyAccess = (id) => {
+const DenyAccess = (ctx, id) => {
     const { username } = ctx.message.from
     try {
         const update = list
@@ -105,7 +104,7 @@ const DenyAccess = (id) => {
 };
 
 // Has Access
-const HasAccess = (id) => {
+const HasAccess = (ctx, id) => {
     const { username } = ctx.message.from
     try {
         const update = list
@@ -119,7 +118,7 @@ const HasAccess = (id) => {
 };
 
 // Has Admin Access
-const HasAdminAccess = (id) => {
+const HasAdminAccess = (ctx, id) => {
     const { username } = ctx.message.from
     try {
         LOG(username, 'Helpers/Users/HasAdminAccess')

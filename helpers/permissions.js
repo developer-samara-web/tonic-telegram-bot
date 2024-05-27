@@ -1,3 +1,5 @@
+//? PERMISSIONS.JS
+
 //Require
 const { Bot } = require('@config/telegram')
 const { LOG } = require('@helpers/helpers')
@@ -6,7 +8,7 @@ const { Markup } = require('telegraf')
 
 //Permissions
 const Permissions = async (ctx, scene) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || 'BOT';
     try {
         const userId = ctx.from.id;
 
@@ -30,20 +32,14 @@ const Permissions = async (ctx, scene) => {
 
 //Permissions Admin
 const PermissionsAdmin = async (ctx, scene) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || 'BOT';
     try {
         const userId = ctx.from.id;
 
         if (HasAdminAccess(ctx, userId)) {
             ctx.scene.enter(scene)
         } else {
-            await ctx.replyWithHTML('⚠️ <b>У вас нет доступа!</b>\nДля получения доступа нажмите кнопку <b>"Получить доступ"</b>. После подтвержедния вам придёт сообщение о доступности бота и вы сможете начать работу.',
-                Markup.keyboard([
-                    ['🔸 Получить доступ']
-                ])
-                    .oneTime()
-                    .resize()
-            )
+            await ctx.replyWithHTML('⚠️ <b>Доступ только для администратора!</b>')
         }
 
         LOG(username, 'Helpers/Permissions/PermissionsAdmin')
@@ -52,53 +48,53 @@ const PermissionsAdmin = async (ctx, scene) => {
     }
 }
 
-//PermissionsAccess
+//Permissions Access
 const PermissionsAccess = async (ctx) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
-        const userId = ctx.from.id;
+        const userId = ctx.from?.id;
 
-        const grant = { action: 'grant_access', id: userId, user: username }
-        const deny = { action: 'deny_access', id: userId, user: username }
+        const grant = { action: 'grant_access', id: userId, user: username };
+        const deny = { action: 'deny_access', id: userId, user: username };
 
         const keyboard = Markup.inlineKeyboard([
             Markup.button.callback('🔹 Разрешить', JSON.stringify(grant)),
             Markup.button.callback('🔸 Запретить', JSON.stringify(deny))
         ]);
 
-        if (!HasAccess(userId)) {
+        if (!HasAccess(ctx, userId)) {
             await Bot.telegram.sendMessage(54355560, `♻️ Пользователь <b>${username}</b> запросил доступ. Разрешить?`, {
                 parse_mode: 'HTML',
                 reply_markup: keyboard.reply_markup
-            })
+            });
         }
 
-        LOG(username, 'Helpers/Permissions/PermissionsAccess')
+        LOG(username, 'Helpers/Permissions/PermissionsAccess');
     } catch (error) {
-        LOG(username, 'Permissions/PermissionsAccess', error)
+        LOG(username, 'Helpers/Permissions/PermissionsAccess', error);
     }
-}
+};
 
-//PermissionsAction
+//Permissions Action
 const PermissionsAction = async (ctx) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
         const { action, id, user } = JSON.parse(ctx.callbackQuery.data);
 
         if (action === 'grant_access') {
-            GrantAccess(id, user);
+            GrantAccess(ctx, id, user);
             await ctx.telegram.sendMessage(id, '✅ Ваш запрос на доступ был одобрен.', Markup.keyboard([
                 ['🔹 Начать работу'],
-            ]).resize().oneTime())
+            ]).resize().oneTime());
 
-            LOG(username, 'Permissions/PermissionsAction', 'Доступ разрешён.')
+            LOG(username, 'Permissions/PermissionsAction', 'Доступ разрешён.');
         } else if (action === 'deny_access') {
-            await ctx.telegram.sendMessage(id, '🚫 Вам отказано в доступе.')
-            LOG(username, 'Permissions/PermissionsAction', 'Отказ в доступе.')
+            await ctx.telegram.sendMessage(id, '🚫 Вам отказано в доступе.');
+            LOG(username, 'Permissions/PermissionsAction', 'Отказ в доступе.');
         }
     } catch (error) {
-        LOG(username, 'Permissions/PermissionsAction', error)
+        LOG(username, 'Helpers/Permissions/PermissionsAction', error);
     }
-}
+};
 
 module.exports = { Permissions, PermissionsAdmin, PermissionsAction, PermissionsAccess }

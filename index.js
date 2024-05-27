@@ -7,6 +7,7 @@ require('module-alias/register');
 // Requires
 const { Bot } = require('@config/telegram')
 const { Scenes, session } = require('telegraf')
+const { Permissions, PermissionsAction } = require('@helpers/permissions')
 
 // Requires configs
 const stages = require('@config/stages')
@@ -20,9 +21,14 @@ Bot.use(session())
 Bot.use(stage.middleware())
 hears(Bot)
 
+//Permission Actions
+Bot.action(/(grant_access|deny_access)/, async (ctx) => {
+    await PermissionsAction(ctx);
+})
+
 // Welcome message
 Bot.start(async (ctx) => {
-    console.log('Hellow World')
+    Permissions(ctx, 'start')
 })
 
 // Launch

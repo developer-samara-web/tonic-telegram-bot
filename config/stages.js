@@ -1,3 +1,5 @@
 //? STAGES.JS
 
-module.exports = []
+module.exports = [
+    require('@scenes/StartScene')
+]

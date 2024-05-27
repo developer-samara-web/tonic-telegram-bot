@@ -1,0 +1,2 @@
+//Hears
+module.exports = Bot => {}

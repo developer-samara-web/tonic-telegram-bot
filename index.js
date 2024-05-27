@@ -8,7 +8,7 @@ require('module-alias/register');
 const { Bot } = require('@config/telegram')
 const { Scenes, session } = require('telegraf')
 
-// Require
+// Requires configs
 const stages = require('@config/stages')
 const hears = require('@config/hears')
 
@@ -19,6 +19,11 @@ const stage = new Scenes.Stage(stages)
 Bot.use(session())
 Bot.use(stage.middleware())
 hears(Bot)
+
+// Welcome message
+Bot.start(async (ctx) => {
+    console.log('Hellow World')
+})
 
 // Launch
 Bot.launch()

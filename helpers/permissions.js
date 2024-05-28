@@ -80,15 +80,18 @@ const PermissionsAction = async (ctx) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
         const { action, id, user } = JSON.parse(ctx.callbackQuery.data);
+        const { message_id } = ctx.callbackQuery.message
 
         if (action === 'grant_access') {
             GrantAccess(ctx, id, user);
+            await ctx.deleteMessage(message_id);
             await ctx.telegram.sendMessage(id, '✅ Ваш запрос на доступ был одобрен.', Markup.keyboard([
                 ['🔹 Начать работу'],
             ]).resize().oneTime());
 
-            LOG(username, 'Permissions/PermissionsAction', 'Доступ разрешён.');
+            LOG(username, 'Permissions/PermissionsAction');
         } else if (action === 'deny_access') {
+            await ctx.deleteMessage(message_id);
             await ctx.telegram.sendMessage(id, '🚫 Вам отказано в доступе.');
             LOG(username, 'Permissions/PermissionsAction', 'Отказ в доступе.');
         }

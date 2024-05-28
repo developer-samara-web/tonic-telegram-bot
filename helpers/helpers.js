@@ -32,7 +32,6 @@ const Archive = (ctx, logDirectory, outputFilePath) => {
             const archive = archiver('zip', { zlib: { level: 9 } });
 
             output.on('close', () => {
-                Logger('BOT', 'Helpers/Admin/CreateLogArchive', 'Archive created')
                 resolve(outputFilePath);
             });
 

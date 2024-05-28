@@ -2,7 +2,7 @@
 
 // Requires
 const { Bot } = require('@config/telegram')
-const { LOG, Arvhive } = require('@helpers/helpers')
+const { LOG, Archive } = require('@helpers/helpers')
 const { AdminMessage } = require('@messages/AdminMessages')
 const { LoadUsers } = require('@helpers/users')
 
@@ -32,12 +32,12 @@ const AdminMessageMiddleware = async (ctx, message) => {
 // AdminLogsMiddleware
 const AdminLogsMiddleware = async (ctx) => {
     const { username } = ctx.message.from
-    const dir = path.join(__dirname, '../logs');
-    const archive = path.join(__dirname, '../logs/logs.zip');
     const path = require('path');
+    const dir = path.join(__dirname, '../logs');
+    const archivePath = path.join(__dirname, '../logs/logs.zip');
 
     try {
-        await Arvhive(ctx, dir, archive);
+        await Archive(ctx, dir, archivePath);
         await ctx.replyWithDocument({ source: archivePath, filename: 'logs.zip' });
 
         LOG(username, 'Middlewares/Admin/AdminLogsMiddleware')

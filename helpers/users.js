@@ -55,7 +55,7 @@ const RemoveUser = (ctx, id) => {
     const { username } = ctx.message.from
     try {
         const update = list
-        const index = data.findIndex(user => user.id === id)
+        const index = update.findIndex(user => user.id == id)
 
         if (index !== -1) {
             update.splice(index, 1)

@@ -36,10 +36,10 @@ stageResult.on('message', async (ctx) => {
             await ctx.replyWithHTML('🚫 <b>Ошибка отправки сообщения</b>')
         }
 
-        Logger(username, 'Scenes/Admin/AdminMessageScene/StageResult')
+        LOG(username, 'Scenes/Admin/AdminMessageScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        Logger(username, 'Scenes/Admin/AdminMessageScene/StageResult', error)
+        LOG(username, 'Scenes/Admin/AdminMessageScene/StageResult', error)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('admin')

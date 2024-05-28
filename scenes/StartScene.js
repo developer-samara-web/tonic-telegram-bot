@@ -23,7 +23,9 @@ StartScene.enter(async (ctx) => {
                         ['🔻 В разработке', '🔻 В разработке'],
                         ['🔻 В разработке', '🔻 В разработке'],
                         [ admin ? '⚙️ Панель управления' : '⚙️ Настройки']
-                    ]
+                    ],
+                    resize_keyboard: true,
+                    one_time_keyboard: true
                 }
             }
         )

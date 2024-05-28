@@ -1,10 +1,10 @@
 //? HEARS.JS
 
-//Requires
+// Requires
 const { Permissions, PermissionsAccess } = require('@helpers/permissions')
 const { UsersListMiddleware } = require('@middlewares/UsersMiddlewares')
 
-//Hears
+// Hears
 module.exports = Bot => {
     // GLOBAL
     Bot.hears('🔹 Начать работу', ctx => Permissions(ctx, 'start'))
@@ -13,7 +13,7 @@ module.exports = Bot => {
 
     // ADMIN
     Bot.hears('⚙️ Панель управления', ctx => Permissions(ctx, 'admin'))
-    Bot.hears('🔹 Отправить сообщение', ctx => {})
+    Bot.hears('🔹 Отправить сообщение', ctx => Permissions(ctx, 'AdminMessageWizard'))
     Bot.hears('🔹 Запросить логи', ctx => {})
 
     // ADMIN USERS

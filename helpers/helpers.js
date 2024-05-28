@@ -1,10 +1,11 @@
 //? HELPERS.JS
 
-//Requires
+// Requires
 const fs = require('fs');
+const archiver = require('archiver');
 const path = require('path');
 
-// Logger Helper
+// Logger
 const LOG = async (user, object, error) => {
     const now = new Date();
     const date = now.toISOString().slice(0, 10);
@@ -22,4 +23,34 @@ const LOG = async (user, object, error) => {
     }
 };
 
-module.exports = { LOG }
+// Archive
+const Archive = (ctx, logDirectory, outputFilePath) => {
+    const { username } = ctx.message.from
+    try {
+        return new Promise((resolve, reject) => {
+            const output = fs.createWriteStream(outputFilePath);
+            const archive = archiver('zip', { zlib: { level: 9 } });
+
+            output.on('close', () => {
+                Logger('BOT', 'Helpers/Admin/CreateLogArchive', 'Archive created')
+                resolve(outputFilePath);
+            });
+
+            archive.on('error', reject);
+
+            archive.pipe(output);
+            archive.glob('**/*', {
+                cwd: logDirectory,
+                ignore: [path.basename(outputFilePath)]
+            });
+
+            archive.finalize();
+            
+            LOG(username, 'Helpers/Archive')
+        });
+    } catch (error) {
+        LOG(username, 'Helpers/Archive', error)
+    }
+};
+
+module.exports = { LOG, Archive }

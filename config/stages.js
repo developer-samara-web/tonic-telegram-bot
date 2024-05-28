@@ -7,6 +7,9 @@ module.exports = [
     // Admin
     require('@scenes/admin/AdminScene'),
 
+    // Msg
+    require('@scenes/admin/message/AdminMessageScene'),
+
     // Users
     require('@scenes/admin/users/UsersScene'),
     require('@scenes/admin/users/add/UsersAddScene'),

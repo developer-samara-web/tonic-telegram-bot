@@ -19,7 +19,7 @@
     "@config": "config",
     "@helpers": "helpers",
     "@messages": "messages",
-    "@middlewares": "middleware",
+    "@middlewares": "middlewares",
     "@requests": "requests",
     "@scenes": "scenes",
     "@users": "users"

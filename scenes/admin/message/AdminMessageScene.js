@@ -29,7 +29,6 @@ stageResult.on('message', async (ctx) => {
 
     try {
         const message = await AdminMessageMiddleware(ctx, ctx.message.text)
-        console.log(message)
 
         if (message) {
             await ctx.replyWithHTML(`✅ <b>Сообщение отправлено:</b>\n\n${ctx.message.text}`)

@@ -2,6 +2,7 @@
 
 //Requires
 const { Permissions, PermissionsAccess } = require('@helpers/permissions')
+const { UsersListMiddleware } = require('@middlewares/UsersMiddlewares')
 
 //Hears
 module.exports = Bot => {
@@ -16,8 +17,8 @@ module.exports = Bot => {
     Bot.hears('🔹 Запросить логи', ctx => {})
 
     // ADMIN USERS
-    Bot.hears('🔹 Управление пользователями', ctx => Permissions(ctx, 'users'))
-    Bot.hears('🔹 Добавить', ctx => {})
-    Bot.hears('🔹 Удалить', ctx => {})
-    Bot.hears('🔹 Список пользователей', ctx => {})
+    Bot.hears('🔹 Пользователи', ctx => Permissions(ctx, 'users'))
+    Bot.hears('🔹 Список пользователей', ctx => UsersListMiddleware(ctx))
+    Bot.hears('🔹 Добавить', ctx => Permissions(ctx, 'UsersAddWizard'))
+    Bot.hears('🔹 Удалить', ctx => Permissions(ctx, 'UsersRemoveWizard'))
 }

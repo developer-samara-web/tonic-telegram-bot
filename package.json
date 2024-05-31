@@ -12,6 +12,9 @@
     "archiver": "^7.0.1",
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
+    "google-auth-library": "^9.10.0",
+    "google-spreadsheet": "^4.1.2",
+    "googleapis": "^137.1.0",
     "module-alias": "^2.2.3",
     "path": "^0.12.7",
     "telegraf": "^4.16.3"

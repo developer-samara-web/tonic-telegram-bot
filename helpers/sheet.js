@@ -5,7 +5,8 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library')
 
 // Auth Sheet
-const AuthSheet = async () => {
+const AuthSheet = async (ctx) => {
+    const { username } = ctx.message.from
     try{
         LOG(username, 'Helpers/Sheet/AuthSheet')
         return serviceAccountAuth = new JWT({
@@ -22,8 +23,9 @@ const AuthSheet = async () => {
 }
 
 // Load Sheet
-const LoadSheet = async (sheet_id) => {
-    const auth = await AuthSheet()
+const LoadSheet = async (ctx, sheet_id) => {
+    const auth = await AuthSheet(ctx)
+    const { username } = ctx.message.from
     try{
         const sheet = new GoogleSpreadsheet(sheet_id, auth);
         await sheet.loadInfo();
@@ -36,9 +38,10 @@ const LoadSheet = async (sheet_id) => {
 }
 
 // Search Sheet
-const SearchSheet = async (sheet_id, name) => {
+const SearchSheet = async (ctx, sheet_id, name) => {
+    const { username } = ctx.message.from
     try{
-        const rows = await LoadSheet(sheet_id);
+        const rows = await LoadSheet(ctx, sheet_id);
 
         LOG(username, 'Helpers/Sheet/SearchSheet')
         return rows.find(row => row._rawData[2] === name)
@@ -48,9 +51,10 @@ const SearchSheet = async (sheet_id, name) => {
 }
 
 // Save Sheet
-const SaveSheet = async (sheet_id, name, update) => {
+const SaveSheet = async (ctx, sheet_id, name, update) => {
+    const { username } = ctx.message.from
     try{
-        const row = await SearchSheet(sheet_id, name);
+        const row = await SearchSheet(ctx, sheet_id, name);
 
         switch(update.type){
             case 'status':

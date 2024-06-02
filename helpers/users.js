@@ -24,7 +24,7 @@ const AddUser = (ctx, id, name) => {
         const update = list
 
         if (!update.some(u => u.id === id)) {
-            update.push({ id, name })
+            update.push({ id, name, role: 'user' })
             SaveUsers(ctx, list, update)
         }
 
@@ -121,8 +121,16 @@ const HasAccess = (ctx, id) => {
 const HasAdminAccess = (ctx, id) => {
     const { username } = ctx.message.from
     try {
-        LOG(username, 'Helpers/Users/HasAdminAccess')
-        return id == process.env.TELEGRAM_ADMIN_ID;
+        const update = list
+        const { role } = update.find(user => user.id === id);
+
+        if( role === 'admin'){
+            LOG(username, 'Helpers/Users/HasAdminAccess')
+            return true
+        } else {
+            LOG(username, 'Helpers/Users/HasAdminAccess')
+            return false
+        }
     } catch (error) {
         LOG(username, 'Helpers/Users/HasAccess', error)
         return false

@@ -3,7 +3,7 @@
 //Require
 const { Bot } = require('@config/telegram')
 const { LOG } = require('@helpers/helpers')
-const { HasAccess, GrantAccess } = require('@helpers/users');
+const { HasAccess, GrantAccess, HasAdminAccess } = require('@helpers/users');
 const { Markup } = require('telegraf')
 
 //Permissions
@@ -31,15 +31,21 @@ const Permissions = async (ctx, scene, func = null) => {
 }
 
 //Permissions Admin
-const PermissionsAdmin = async (ctx, scene) => {
+const PermissionsAdmin = async (ctx, scene, func = null) => {
     const username = ctx.message?.from?.username || 'BOT';
     try {
         const userId = ctx.from.id;
 
         if (HasAdminAccess(ctx, userId)) {
-            ctx.scene.enter(scene)
+            func ? func() : ctx.scene.enter(scene)
         } else {
-            await ctx.replyWithHTML('⚠️ <b>Доступ только для администратора!</b>')
+            await ctx.replyWithHTML('⚠️ <b>У вас нет доступа!</b>\nДля получения доступа нажмите кнопку <b>"Повысить уровень"</b>. После подтвержедния вам придёт сообщение об обновлении прав доступа.',
+            Markup.keyboard([
+                ['🔸 Повысить уровень']
+            ])
+                .oneTime()
+                .resize()
+        )
         }
 
         LOG(username, 'Helpers/Permissions/PermissionsAdmin')
@@ -63,7 +69,7 @@ const PermissionsAccess = async (ctx) => {
         ]);
 
         if (!HasAccess(ctx, userId)) {
-            await Bot.telegram.sendMessage(54355560, `♻️ Пользователь <b>${username}</b> запросил доступ. Разрешить?`, {
+            await Bot.telegram.sendMessage(process.env.TELEGRAM_ADMIN_ID, `♻️ Пользователь <b>${username}</b> запросил доступ. Разрешить?`, {
                 parse_mode: 'HTML',
                 reply_markup: keyboard.reply_markup
             });

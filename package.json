@@ -10,22 +10,24 @@
   "license": "ISC",
   "dependencies": {
     "archiver": "^7.0.1",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
     "google-auth-library": "^9.10.0",
     "google-spreadsheet": "^4.1.2",
     "googleapis": "^137.1.0",
     "module-alias": "^2.2.3",
+    "oauth-1.0a": "^2.2.6",
     "path": "^0.12.7",
     "telegraf": "^4.16.3"
   },
   "_moduleAliases": {
     "@config": "config",
+    "@data": "data",
     "@helpers": "helpers",
     "@messages": "messages",
     "@middlewares": "middlewares",
     "@requests": "requests",
-    "@scenes": "scenes",
-    "@users": "users"
+    "@scenes": "scenes"
   }
 }

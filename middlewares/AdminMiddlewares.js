@@ -43,6 +43,8 @@ const AdminLogsMiddleware = async (ctx) => {
         LOG(username, 'Middlewares/Admin/AdminLogsMiddleware')
     } catch (error) {
         LOG(username, 'Middlewares/Admin/AdminLogsMiddleware', error)
+    } finally {
+        return ctx.scene.enter('admin')
     }
 }
 

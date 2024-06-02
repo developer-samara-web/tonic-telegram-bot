@@ -10,7 +10,7 @@ const LOG = async (user, object, error) => {
     const now = new Date();
     const date = now.toISOString().slice(0, 10);
     const time = now.toTimeString().slice(0, 8);
-    const logMessage = `[${date} ${time}] User: ${user}, Function: ${object}, ${error ? 'ERROR' : 'INFO'}: ${error ? error : 'OK'}\n`;
+    const logMessage = `[${error ? 'ERROR' : 'INFO'}][${date} ${time}] User: ${user}, Function: ${object}, ${error ? 'ERROR' : 'INFO'}: ${error ? error : 'OK'}\n`;
 
     const logDir = path.join(__dirname, '..', 'logs');
 

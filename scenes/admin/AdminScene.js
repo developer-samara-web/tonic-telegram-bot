@@ -15,6 +15,7 @@ AdminScene.enter(async (ctx) => {
         await ctx.replyWithHTML('<b>🔹 ADMIN PANEL 🔹</b> Выберите действие:', Markup.keyboard([
             [ admin ? '🔹 Отправить сообщение' : '🔺 Повысить права'],
             [ admin ? '🔹 Пользователи' : '🔺 Повысить права', admin ? '🔹 Запросить логи' : '🔺 Повысить права'],
+            [ admin ? '🔹 Мониторинг' : '🔺 Повысить права'],
             ['🔺 На главную'],
         ]).resize().oneTime());
         

@@ -13,5 +13,8 @@ module.exports = [
     // Users
     require('@scenes/admin/users/UsersScene'),
     require('@scenes/admin/users/add/UsersAddScene'),
-    require('@scenes/admin/users/remove/UsersRemoveScene')
+    require('@scenes/admin/users/remove/UsersRemoveScene'),
+
+    // Monitoring
+    require('@scenes/admin/monitoring/MonitoringScene.js'),
 ]

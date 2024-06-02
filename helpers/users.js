@@ -2,7 +2,7 @@
 
 // Requires
 const fs = require('fs')
-const list = require('@users/users.json')
+const list = require('@data/users.json')
 const { LOG } = require('@helpers/helpers')
 
 // Load Users
@@ -40,7 +40,7 @@ const AddUser = (ctx, id, name) => {
 const SaveUsers = (ctx, user) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
-        fs.writeFileSync('./users/users.json', JSON.stringify(user, null, 4))
+        fs.writeFileSync('./data/users.json', JSON.stringify(user, null, 4))
 
         LOG(username, 'Helpers/Users/SaveUsers')
         return true

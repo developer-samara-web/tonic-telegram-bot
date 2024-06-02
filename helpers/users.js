@@ -129,4 +129,20 @@ const HasAdminAccess = (ctx, id) => {
     }
 };
 
-module.exports = { LoadUsers, AddUser, SaveUsers, RemoveUser, GrantAccess, DenyAccess, HasAccess, HasAdminAccess }
+const SheetAdd = async (ctx, sheet_id) => {
+    const { username, id } = ctx.message.from
+    try {
+        const update = list
+        const index = update.findIndex(user => user.id == id)
+
+        update[index].sheet = sheet_id
+
+        LOG(username, 'Helpers/Users/HasAdminAccess')
+        return SaveUsers(ctx, list, update);
+    } catch (error) {
+        LOG(username, 'Helpers/Users/HasAccess', error)
+        return false
+    }
+};
+
+module.exports = { LoadUsers, AddUser, SaveUsers, RemoveUser, GrantAccess, DenyAccess, HasAccess, HasAdminAccess, SheetAdd }

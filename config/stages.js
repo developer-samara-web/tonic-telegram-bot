@@ -17,4 +17,8 @@ module.exports = [
 
     // Monitoring
     require('@scenes/admin/monitoring/MonitoringScene.js'),
+
+    // User Settings
+    require('@scenes/user/settings/SettingsScene.js'),
+    require('@scenes/user/settings/sheet/SheetAddScene.js'),
 ]

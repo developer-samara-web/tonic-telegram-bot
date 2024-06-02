@@ -3,7 +3,7 @@
 // Require
 const { LOG } = require('@helpers/helpers')
 const { UsersAddMessage, UsersRemoveMessage, UsersListMessage } = require('@messages/UsersMessages')
-const { AddUser, RemoveUser, LoadUsers } = require('@helpers/users')
+const { AddUser, RemoveUser, LoadUsers, SheetAdd } = require('@helpers/users')
 
 // User Add Middleware
 const UsersAddMiddleware = async (ctx) => {
@@ -48,4 +48,15 @@ const UsersListMiddleware = async (ctx) => {
     }
 }
 
-module.exports = { UsersAddMiddleware, UsersRemoveMiddleware, UsersListMiddleware }
+// User Sheet Add Middleware
+const UsersSheetAddMiddleware = async (ctx, sheet_id) => {
+    const { username } = ctx.message.from
+    try {
+        LOG(username, 'Middlewares/Users/UsersListMiddleware')
+        return await SheetAdd(ctx, sheet_id)
+    } catch (error) {
+        LOG(username, 'Middlewares/Users/UsersListMiddleware', error)
+    }
+}
+
+module.exports = { UsersAddMiddleware, UsersRemoveMiddleware, UsersListMiddleware, UsersSheetAddMiddleware }

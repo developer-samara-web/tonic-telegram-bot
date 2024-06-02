@@ -7,13 +7,13 @@ const { HasAccess, GrantAccess } = require('@helpers/users');
 const { Markup } = require('telegraf')
 
 //Permissions
-const Permissions = async (ctx, scene) => {
+const Permissions = async (ctx, scene, func = null) => {
     const username = ctx.message?.from?.username || 'BOT';
     try {
         const userId = ctx.from.id;
 
         if (HasAccess(ctx, userId)) {
-            ctx.scene.enter(scene)
+            func ? func() : ctx.scene.enter(scene)
         } else {
             await ctx.replyWithHTML('⚠️ <b>У вас нет доступа!</b>\nДля получения доступа нажмите кнопку <b>"Получить доступ"</b>. После подтвержедния вам придёт сообщение о доступности бота и вы сможете начать работу.',
                 Markup.keyboard([

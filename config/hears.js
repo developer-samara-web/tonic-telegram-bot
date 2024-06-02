@@ -16,16 +16,16 @@ module.exports = Bot => {
     // ADMIN
     Bot.hears('⚙️ Панель управления', ctx => Permissions(ctx, 'admin'))
     Bot.hears('🔹 Отправить сообщение', ctx => Permissions(ctx, 'AdminMessageWizard'))
-    Bot.hears('🔹 Запросить логи', ctx => AdminLogsMiddleware(ctx))
+    Bot.hears('🔹 Запросить логи', ctx => Permissions(ctx, null, AdminLogsMiddleware(ctx)))
     Bot.hears('🔹 Мониторинг', ctx => Permissions(ctx, 'monitoring'))
 
     // MONITORING
-    Bot.hears('🔹 Включить', ctx => MonitoringSwitcherMiddleware(ctx, true))
-    Bot.hears('🔻 Выключить', ctx => MonitoringSwitcherMiddleware(ctx, false))
+    Bot.hears('🔹 Включить', ctx => Permissions(ctx, null, MonitoringSwitcherMiddleware(ctx, true)))
+    Bot.hears('🔻 Выключить', ctx => Permissions(ctx, null, MonitoringSwitcherMiddleware(ctx, false)))
 
     // ADMIN USERS
     Bot.hears('🔹 Пользователи', ctx => Permissions(ctx, 'users'))
-    Bot.hears('🔹 Список пользователей', ctx => UsersListMiddleware(ctx))
+    Bot.hears('🔹 Список пользователей', ctx => Permissions(ctx, null, UsersListMiddleware(ctx)))
     Bot.hears('🔹 Добавить', ctx => Permissions(ctx, 'UsersAddWizard'))
     Bot.hears('🔹 Удалить', ctx => Permissions(ctx, 'UsersRemoveWizard'))
 }

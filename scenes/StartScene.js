@@ -20,8 +20,6 @@ StartScene.enter(async (ctx) => {
                 reply_markup: {
                     keyboard: [
                         ['🔻 В разработке', '🔻 В разработке'],
-                        ['🔻 В разработке', '🔻 В разработке'],
-                        ['🔻 В разработке', '🔻 В разработке'],
                         [ admin ? '⚙️ Панель управления' : '⚙️ Настройки']
                     ],
                     resize_keyboard: true,

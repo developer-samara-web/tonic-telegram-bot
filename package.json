@@ -1,6 +1,6 @@
 {
   "name": "tonic-telegram-bot",
-  "version": "0.0.1 Alpha",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {

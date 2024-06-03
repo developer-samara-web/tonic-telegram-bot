@@ -7,7 +7,7 @@ require('module-alias/register');
 // Requires
 const { Bot } = require('@config/telegram')
 const { Scenes, session } = require('telegraf')
-const { Permissions, PermissionsAction } = require('@helpers/permissions')
+const { Permissions, PermissionsAction, PermissionsAdminAction } = require('@helpers/permissions')
 
 // Requires configs
 const stages = require('@config/stages')
@@ -24,6 +24,10 @@ hears(Bot)
 //Permission Actions
 Bot.action(/(grant_access|deny_access)/, async (ctx) => {
     await PermissionsAction(ctx);
+})
+
+Bot.action(/(grant_admin_access|deny_admin_access)/, async (ctx) => {
+    await PermissionsAdminAction(ctx);
 })
 
 // Welcome message

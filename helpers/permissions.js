@@ -3,7 +3,7 @@
 //Require
 const { Bot } = require('@config/telegram')
 const { LOG } = require('@helpers/helpers')
-const { HasAccess, GrantAccess, HasAdminAccess } = require('@helpers/users');
+const { HasAccess, GrantAccess, HasAdminAccess, GrantAdminAccess } = require('@helpers/users');
 const { Markup } = require('telegraf')
 
 //Permissions
@@ -106,4 +106,54 @@ const PermissionsAction = async (ctx) => {
     }
 };
 
-module.exports = { Permissions, PermissionsAdmin, PermissionsAction, PermissionsAccess }
+//Permissions Admin Access
+const PermissionsAdminAccess = async (ctx) => {
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
+    try {
+        const userId = ctx.from?.id;
+
+        const grant = { action: 'grant_admin_access', id: userId, user: username };
+        const deny = { action: 'deny_admin_access', id: userId, user: username };
+
+        const keyboard = Markup.inlineKeyboard([
+            Markup.button.callback('🔹 Разрешить', JSON.stringify(grant)),
+            Markup.button.callback('🔸 Запретить', JSON.stringify(deny))
+        ]);
+
+        await Bot.telegram.sendMessage(process.env.TELEGRAM_ADMIN_ID, `♻️ Пользователь <b>${username}</b> запросил доступ администратора. Разрешить?`, {
+            parse_mode: 'HTML',
+            reply_markup: keyboard.reply_markup
+        });
+
+        LOG(username, 'Helpers/Permissions/PermissionsAdminAccess');
+    } catch (error) {
+        LOG(username, 'Helpers/Permissions/PermissionsAdminAccess', error);
+    }
+};
+
+//Permissions Admin Action
+const PermissionsAdminAction = async (ctx) => {
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
+    try {
+        const { action, id, user } = JSON.parse(ctx.callbackQuery.data);
+        const { message_id } = ctx.callbackQuery.message
+
+        if (action === 'grant_admin_access') {
+            GrantAdminAccess(ctx, id, user);
+            await ctx.deleteMessage(message_id);
+            await ctx.telegram.sendMessage(id, '✅ Ваш запрос на доступ админа был одобрен.', Markup.keyboard([
+                ['🔹 Продолжить'],
+            ]).resize().oneTime());
+
+            LOG(username, 'Permissions/PermissionsAdminAction');
+        } else if (action === 'deny_admin_access') {
+            await ctx.deleteMessage(message_id);
+            await ctx.telegram.sendMessage(id, '🚫 Вам отказано в доступе админа.');
+            LOG(username, 'Permissions/PermissionsAdminAction', 'Отказ в доступе.');
+        }
+    } catch (error) {
+        LOG(username, 'Helpers/Permissions/PermissionsAdminAction', error);
+    }
+};
+
+module.exports = { Permissions, PermissionsAdmin, PermissionsAction, PermissionsAccess, PermissionsAdminAccess, PermissionsAdminAction }

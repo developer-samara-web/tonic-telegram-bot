@@ -22,9 +22,10 @@ const AddUser = (ctx, id, name) => {
     const { username } = ctx.message.from
     try {
         const update = list
+        const role = 'user'
 
         if (!update.some(u => u.id === id)) {
-            update.push({ id, name, role: 'user' })
+            update.push({ id, name, role })
             SaveUsers(ctx, list, update)
         }
 
@@ -37,9 +38,10 @@ const AddUser = (ctx, id, name) => {
 }
 
 // Save Users
-const SaveUsers = (ctx, user) => {
+const SaveUsers = (ctx, user, update) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
+        console.log(update)
         fs.writeFileSync('./data/users.json', JSON.stringify(user, null, 4))
 
         LOG(username, 'Helpers/Users/SaveUsers')
@@ -75,13 +77,31 @@ const GrantAccess = (ctx, id, name) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
         const update = list
-        update.push({ id, name });
+        update.push({ id, name, role: 'user' });
         SaveUsers(ctx, update);
 
         LOG(username, 'Helpers/Users/GrantAccess')
         return true
     } catch (error) {
         LOG(username, 'Helpers/Users/GrantAccess', error)
+        return false
+    }
+};
+
+// Grant Admin Access
+const GrantAdminAccess = (ctx, id) => {
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
+    try {
+        const update = list
+        const index = update.findIndex(user => user.id == id)
+
+        update[index].role = 'admin';
+        SaveUsers(ctx, update);
+
+        LOG(username, 'Helpers/Users/GrantAdminAccess')
+        return true
+    } catch (error) {
+        LOG(username, 'Helpers/Users/GrantAdminAccess', error)
         return false
     }
 };
@@ -132,7 +152,7 @@ const HasAdminAccess = (ctx, id) => {
             return false
         }
     } catch (error) {
-        LOG(username, 'Helpers/Users/HasAccess', error)
+        LOG(username, 'Helpers/Users/HasAdminAccess', error)
         return false
     }
 };
@@ -145,12 +165,12 @@ const SheetAdd = async (ctx, sheet_id) => {
 
         update[index].sheet = sheet_id
 
-        LOG(username, 'Helpers/Users/HasAdminAccess')
+        LOG(username, 'Helpers/Users/SheetAdd')
         return SaveUsers(ctx, list, update);
     } catch (error) {
-        LOG(username, 'Helpers/Users/HasAccess', error)
+        LOG(username, 'Helpers/Users/SheetAdd', error)
         return false
     }
 };
 
-module.exports = { LoadUsers, AddUser, SaveUsers, RemoveUser, GrantAccess, DenyAccess, HasAccess, HasAdminAccess, SheetAdd }
+module.exports = { LoadUsers, AddUser, SaveUsers, RemoveUser, GrantAccess, DenyAccess, HasAccess, HasAdminAccess, SheetAdd, GrantAdminAccess }

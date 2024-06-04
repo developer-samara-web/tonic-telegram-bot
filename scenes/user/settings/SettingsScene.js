@@ -1,18 +1,19 @@
-//? STARTSCENE.JS
+//? SCENES | SETTINGS
 
-//Require
-const { LOG } = require('@helpers/helpers')
+//* Requires
+const { LOG } = require('@helpers/base')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
-//Start Scene
+
+//* START - SettingsScene
 const SettingsScene = new BaseScene('settings');
 SettingsScene.enter(async (ctx) => {
     const { username } = ctx.message.from
     
     try {
         await ctx.replyWithHTML('<b>🔹 USER PANEL 🔹</b> Выберите действие:', Markup.keyboard([
-            ['🔹 Сейчас в работе', '🔹 Добавить таблицу'],
-            ['🔸 Повысить уровень'],
+            ['🔹 Добавить таблицу'],
+            ['🔹 Повысить уровень'],
             ['🔺 На главную'],
         ]).resize().oneTime());
 
@@ -20,6 +21,8 @@ SettingsScene.enter(async (ctx) => {
     } catch (error) {
         LOG(username, 'Scenes/User/Settings/SettingsScene', error)
     }
-});
+})
+//* END - SettingsScene
+
 
 module.exports = SettingsScene

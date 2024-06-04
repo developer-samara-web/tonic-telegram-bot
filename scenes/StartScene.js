@@ -1,11 +1,12 @@
-//? STARTSCENE.JS
+//? SCENES | START
 
-//Require
-const { LOG } = require('@helpers/helpers')
+//* Requires
+const { LOG } = require('@helpers/base')
 const { HasAdminAccess } = require('@helpers/users')
 const { Scenes: { BaseScene } } = require('telegraf')
 
-//Start Scene
+
+//* START - StartScene
 const StartScene = new BaseScene('start');
 StartScene.enter(async (ctx) => {
     const { username, id } = ctx.message.from
@@ -15,11 +16,11 @@ StartScene.enter(async (ctx) => {
         await ctx.replyWithPhoto(
             { source: './assets/start.png' },
             {
-                caption: `Приветствую, *${username}*.\nЭто панель управления *GSEARCHBOT*.\n\n*Администратор:* ${process.env.ADMIN_NAME}\n\n🔹 *Выберите действие:*`,
+                caption: `Приветствую, *${username}*.\nЭто панель управления *GSEARCHBOT*.\n\n❇️ *Обновление 1.0:*\nАвтоматическое создание Tonic ссылок.\n\n*Администратор:* ${process.env.ADMIN_NAME}`,
                 parse_mode: 'Markdown',
                 reply_markup: {
                     keyboard: [
-                        ['🔻 В разработке', '🔻 В разработке'],
+                        ['🔹 Tonic', '🔻 В разработке'],
                         [ admin ? '⚙️ Панель управления' : '⚙️ Настройки']
                     ],
                     resize_keyboard: true,
@@ -33,5 +34,7 @@ StartScene.enter(async (ctx) => {
         LOG(username, 'Scenes/StartScene', error)
     }
 });
+//* END - StartScene
+
 
 module.exports = StartScene

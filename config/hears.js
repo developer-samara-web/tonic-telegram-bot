@@ -1,35 +1,50 @@
-//? HEARS.JS
+//? CONFIG | HEARS
 
-// Requires
+//* Requires
 const { UsersListMiddleware } = require('@middlewares/UsersMiddlewares')
 const { AdminLogsMiddleware } = require('@middlewares/AdminMiddlewares')
 const { Permissions, PermissionsAdmin, PermissionsAccess, PermissionsAdminAccess } = require('@helpers/permissions')
 const { MonitoringSwitcherMiddleware } = require('@middlewares/MonitoringMiddlewares')
 
-// Hears
-module.exports = Bot => {
-    // GLOBAL
-    Bot.hears('🔹 Начать работу', ctx => Permissions(ctx, 'start'))
-    Bot.hears('🔹 Продолжить', ctx => Permissions(ctx, 'start'))
-    Bot.hears('🔸 Получить доступ', ctx => PermissionsAccess(ctx))
-    Bot.hears('🔸 Повысить уровень', ctx => PermissionsAdminAccess(ctx))
-    Bot.hears('🔺 На главную', ctx => Permissions(ctx, 'start'))
 
-    // USER SETTINGS
+module.exports = Bot => {
+    //* GLOBAL
+    Bot.hears(['🔹 Начать работу', '🔹 Продолжить', '🔺 На главную'], ctx => Permissions(ctx, 'start'))
+    Bot.hears('🔸 Получить доступ', ctx => PermissionsAccess(ctx))
+    Bot.hears('🔹 Повысить уровень', ctx => PermissionsAdminAccess(ctx))
+
+    //* TONIC
+    Bot.hears(['🔹 Tonic', '🔻 Назад'], ctx => Permissions(ctx, 'tonic'))
+    Bot.hears('🔹 Создать', ctx => Permissions(ctx, 'TonicLinkWizard'))
+    Bot.hears('🔹 Редактировать', ctx => Permissions(ctx, 'tonic-edits'))
+    Bot.hears('🔹 Проверить статус', ctx => Permissions(ctx, 'TonicStatusWizard'))
+    Bot.hears('🔹 Статистика', ctx => Permissions(ctx, 'tonic-stats'))
+
+    //* TONIC EDITS
+    Bot.hears('🔹 Добавить пиксель', ctx => Permissions(ctx, 'TonicPixelWizard'))
+    Bot.hears('🔹 Добавть ключи', ctx => Permissions(ctx, 'TonicSetKeywordsWizard'))
+    Bot.hears("🔹 Добавть Postback'и", ctx => Permissions(ctx, 'TonicСallbackWizard'))
+
+    //* TONIC STATS
+    Bot.hears('🔹 Общая статистика', ctx => Permissions(ctx, 'TonicStatisticsWizard'))
+    Bot.hears('🔹 Статистика компании', ctx => Permissions(ctx, 'TonicCompanyWizard'))
+    Bot.hears('🔹 Статистика ключей', ctx => Permissions(ctx, 'TonicKeywordsWizard'))
+
+    //* MONITORING
+    Bot.hears('🔹 Включить', ctx => PermissionsAdmin(ctx, null, MonitoringSwitcherMiddleware(ctx, true)))
+    Bot.hears('🔻 Выключить', ctx => PermissionsAdmin(ctx, null, MonitoringSwitcherMiddleware(ctx, false)))
+
+    //* USER SETTINGS
     Bot.hears('⚙️ Настройки', ctx => Permissions(ctx, 'settings'))
     Bot.hears('🔹 Добавить таблицу', ctx => Permissions(ctx, 'SheetAddWizard'))
 
-    // ADMIN
+    //* ADMIN
     Bot.hears('⚙️ Панель управления', ctx => PermissionsAdmin(ctx, 'admin'))
     Bot.hears('🔹 Отправить сообщение', ctx => PermissionsAdmin(ctx, 'AdminMessageWizard'))
     Bot.hears('🔹 Запросить логи', ctx => PermissionsAdmin(ctx, null, AdminLogsMiddleware(ctx)))
     Bot.hears('🔹 Мониторинг', ctx => PermissionsAdmin(ctx, 'monitoring'))
 
-    // MONITORING
-    Bot.hears('🔹 Включить', ctx => PermissionsAdmin(ctx, null, MonitoringSwitcherMiddleware(ctx, true)))
-    Bot.hears('🔻 Выключить', ctx => PermissionsAdmin(ctx, null, MonitoringSwitcherMiddleware(ctx, false)))
-
-    // ADMIN USERS
+    //* ADMIN USERS
     Bot.hears('🔹 Пользователи', ctx => PermissionsAdmin(ctx, 'users'))
     Bot.hears('🔹 Список пользователей', ctx => PermissionsAdmin(ctx, null, UsersListMiddleware(ctx)))
     Bot.hears('🔹 Добавить', ctx => PermissionsAdmin(ctx, 'UsersAddWizard'))

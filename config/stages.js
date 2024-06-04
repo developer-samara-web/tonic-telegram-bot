@@ -1,24 +1,34 @@
-//? STAGES.JS
+//? CONFIG | STAGES
+
 
 module.exports = [
-    // Start
+    //* GLOBAL
     require('@scenes/StartScene'),
 
-    // Admin
+    //* TONIC
+    require('@scenes/user/tonic/TonicScene'),
+    require('@scenes/user/tonic/create/TonicCreateScene'),
+    require('@scenes/user/tonic/status/TonicStatusScene'),
+    require('@scenes/user/tonic/edits/TonicEditsScene'),
+    require('@scenes/user/tonic/edits/pixel/TonicPixelScene'),
+    require('@scenes/user/tonic/edits/keywords/TonicKeywordsScene'),
+    require('@scenes/user/tonic/edits/callbacks/TonicСallbackScene'),
+    require('@scenes/user/tonic/statistics/TonicStatisticsScene'),
+    require('@scenes/user/tonic/statistics/general/TonicStatisticsScene'),
+    require('@scenes/user/tonic/statistics/сompany/TonicCompanyScene'),
+    require('@scenes/user/tonic/statistics/keywords/TonicKeywordsScene'),
+
+    //* USER
+    require('@scenes/user/settings/SettingsScene'),
+    require('@scenes/user/settings/sheet/SheetAddScene'),
+
+    //* ADMIN
     require('@scenes/admin/AdminScene'),
-
-    // Msg
     require('@scenes/admin/message/AdminMessageScene'),
-
-    // Users
     require('@scenes/admin/users/UsersScene'),
     require('@scenes/admin/users/add/UsersAddScene'),
     require('@scenes/admin/users/remove/UsersRemoveScene'),
 
-    // Monitoring
-    require('@scenes/admin/monitoring/MonitoringScene.js'),
-
-    // User Settings
-    require('@scenes/user/settings/SettingsScene.js'),
-    require('@scenes/user/settings/sheet/SheetAddScene.js'),
+    //* MONITORING
+    require('@scenes/admin/monitoring/MonitoringScene'),
 ]

@@ -1,12 +1,13 @@
-//? MONITORINGMIDDLEWARE.JS
+//? MIDDLEWARES | MONITORING
 
-// Requires
+//* Requires
 const fs = require('fs');
-const { LOG } = require('@helpers/helpers')
+const { LOG } = require('@helpers/base')
 const { Status } = require('@helpers/tonic')
 const { SaveSheet } = require('@helpers/sheet')
 
-// Monitoring Middleware
+
+//* START - MonitoringMiddleware / Мониторинг и создание компаний
 const MonitoringMiddleware = async (ctx) => {
     const { username } = ctx.message.from
 
@@ -52,8 +53,10 @@ const MonitoringMiddleware = async (ctx) => {
         LOG(username, 'Messages/Monitoring/MonitoringMiddleware', error)
     }
 }
+//* END - MonitoringMiddleware
 
-// Monitoring Switcher Middleware
+
+//* START - MonitoringSwitcherMiddleware/ Переключатель работы мониторинга
 const MonitoringSwitcherMiddleware = async (ctx, status) => {
     const { username } = ctx.message.from
     try {
@@ -72,5 +75,10 @@ const MonitoringSwitcherMiddleware = async (ctx, status) => {
         return ctx.scene.enter('monitoring')
     }
 }
+//* END - MonitoringSwitcherMiddleware
 
-module.exports = { MonitoringMiddleware, MonitoringSwitcherMiddleware }
+
+module.exports = { 
+    MonitoringMiddleware, 
+    MonitoringSwitcherMiddleware 
+}

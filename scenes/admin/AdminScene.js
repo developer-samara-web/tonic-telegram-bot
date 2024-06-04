@@ -1,11 +1,12 @@
-//? ADMINSCENE.JS
+//? SCENES | ADMIN
 
-//Require
-const { LOG } = require('@helpers/helpers')
+//* Requires
+const { LOG } = require('@helpers/base')
 const { HasAdminAccess } = require('@helpers/users')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
-//TonicScene
+
+//* START - AdminScene
 const AdminScene = new BaseScene('admin');
 AdminScene.enter(async (ctx) => {
     const { username, id } = ctx.message.from
@@ -24,5 +25,7 @@ AdminScene.enter(async (ctx) => {
         LOG(username, 'Scenes/Admin/AdminScene', error)
     }
 });
+//* END - AdminScene
+
 
 module.exports = AdminScene

@@ -1,12 +1,13 @@
-//? ADMINMIDDLEWARES.JS
+//? MIDDLEWARES | ADMIN
 
-// Requires
+//* Requires
 const { Bot } = require('@config/telegram')
-const { LOG, Archive } = require('@helpers/helpers')
+const { LOG, Archive } = require('@helpers/base')
 const { AdminMessage } = require('@messages/AdminMessages')
 const { LoadUsers } = require('@helpers/users')
 
-// AdminMessageMiddleware
+
+//* START - AdminMessageMiddleware / Сообщение всем пользователям бота
 const AdminMessageMiddleware = async (ctx, message) => {
     const { username } = ctx.message.from
 
@@ -28,8 +29,10 @@ const AdminMessageMiddleware = async (ctx, message) => {
         LOG(username, 'Middlewares/Admin/AdminMessageMiddleware', error)
     }
 }
+//* END - AdminMessageMiddleware
 
-// AdminLogsMiddleware
+
+//* START - AdminLogsMiddleware / Запрос файла логов
 const AdminLogsMiddleware = async (ctx) => {
     const { username } = ctx.message.from
     const path = require('path');
@@ -47,5 +50,10 @@ const AdminLogsMiddleware = async (ctx) => {
         return ctx.scene.enter('admin')
     }
 }
+//* END - AdminLogsMiddleware
 
-module.exports = { AdminMessageMiddleware, AdminLogsMiddleware }
+
+module.exports = { 
+    AdminMessageMiddleware, 
+    AdminLogsMiddleware 
+}

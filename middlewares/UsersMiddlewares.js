@@ -1,11 +1,12 @@
-//? USERSMIDDLEWARES.JS
+//? MIDDLEWARES | USERS
 
-// Require
-const { LOG } = require('@helpers/helpers')
+//* Require
+const { LOG } = require('@helpers/base')
 const { UsersAddMessage, UsersRemoveMessage, UsersListMessage } = require('@messages/UsersMessages')
 const { AddUser, RemoveUser, LoadUsers, SheetAdd } = require('@helpers/users')
 
-// User Add Middleware
+
+//* START - UsersAddMiddleware / Добавление пользователей
 const UsersAddMiddleware = async (ctx) => {
     const { username } = ctx.message.from
     const { id, name } = ctx.wizard.state.data
@@ -18,21 +19,25 @@ const UsersAddMiddleware = async (ctx) => {
         LOG(username, 'Middlewares/Users/UsersAddMiddleware', error)
     }
 }
+//* END - UsersAddMiddleware
 
-// User Delete Middleware
+
+//* START - UsersRemoveMiddleware / Удаление пользователей
 const UsersRemoveMiddleware = async (ctx, id) => {
     const { username } = ctx.message.from
     try {
         const response = RemoveUser(ctx, id);
 
-        LOG(username, 'Middlewares/Users/UserDeleteMiddleware')
+        LOG(username, 'Middlewares/Users/UsersRemoveMiddleware')
         return await UsersRemoveMessage(ctx, response, id)
     } catch (error) {
-        LOG(username, 'Middlewares/Users/UserDeleteMiddleware', error)
+        LOG(username, 'Middlewares/Users/UsersRemoveMiddleware', error)
     }
 }
+//* END - UsersRemoveMiddleware
 
-// User List Middleware
+
+//* START - UsersListMiddleware / Получение списка пользователей
 const UsersListMiddleware = async (ctx) => {
     const { username } = ctx.message.from
     try {
@@ -47,16 +52,25 @@ const UsersListMiddleware = async (ctx) => {
         return ctx.scene.enter('users')
     }
 }
+//* END - UsersListMiddleware
 
-// User Sheet Add Middleware
+
+//* START - UsersSheetAddMiddleware / Добавление sheet_id пользователя
 const UsersSheetAddMiddleware = async (ctx, sheet_id) => {
     const { username } = ctx.message.from
     try {
-        LOG(username, 'Middlewares/Users/UsersListMiddleware')
+        LOG(username, 'Middlewares/Users/UsersSheetAddMiddleware')
         return await SheetAdd(ctx, sheet_id)
     } catch (error) {
-        LOG(username, 'Middlewares/Users/UsersListMiddleware', error)
+        LOG(username, 'Middlewares/Users/UsersSheetAddMiddleware', error)
     }
 }
+//* END - UsersSheetAddMiddleware
 
-module.exports = { UsersAddMiddleware, UsersRemoveMiddleware, UsersListMiddleware, UsersSheetAddMiddleware }
+
+module.exports = {
+    UsersAddMiddleware,
+    UsersRemoveMiddleware,
+    UsersListMiddleware,
+    UsersSheetAddMiddleware
+}

@@ -1,9 +1,10 @@
-//? ADMINMESSAGES.JS
+//? MIDDLEWARES | ADMIN
 
-// Require
-const { LOG } = require('@helpers/helpers')
+//* Requires
+const { LOG } = require('@helpers/base')
 
-// AdminMessage
+
+//* START - AdminMessage | Отправка сообщения всем пользователям
 const AdminMessage = async (ctx, message) => {
     const { username } = ctx.message.from
     try {
@@ -13,5 +14,7 @@ const AdminMessage = async (ctx, message) => {
         LOG(username, 'Messages/Admin/AdminMessage', error)
     }
 }
+//* END - AdminMessage
+
 
 module.exports = { AdminMessage }

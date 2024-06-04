@@ -1,10 +1,12 @@
-//? SHEET.JS
+//? HELPERS | SHEET
 
-const { LOG } = require('@helpers/helpers')
+//* Requires
+const { LOG, UpdateRowData } = require('@helpers/base')
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library')
 
-// Auth Sheet
+
+//* START - AuthSheet | Авторизация Google Sheet
 const AuthSheet = async (ctx) => {
     const { username } = ctx.message.from
     try {
@@ -21,8 +23,10 @@ const AuthSheet = async (ctx) => {
         LOG(username, 'Helpers/Sheet/AuthSheet', error)
     }
 }
+//* END - AuthSheet
 
-// Load Sheet
+
+//* START - LoadSheet | Запрос получения данных из GoogleSheet тыблицы
 const LoadSheet = async (ctx, sheet_id) => {
     const auth = await AuthSheet(ctx)
     const { username } = ctx.message.from
@@ -36,8 +40,10 @@ const LoadSheet = async (ctx, sheet_id) => {
         LOG(username, 'Helpers/Sheet/LoadSheet', error)
     }
 }
+//* END - LoadSheet
 
-// Search Sheet
+
+//* START - SearchSheet | Поиск строк в GoogleSheet таблице
 const SearchSheet = async (ctx, sheet_id, name) => {
     const { username } = ctx.message.from
     try {
@@ -49,44 +55,10 @@ const SearchSheet = async (ctx, sheet_id, name) => {
         LOG(username, 'Helpers/Sheet/SearchSheet', error)
     }
 }
+//* END - SearchSheet
 
-// CreateURL
-const CreateURL = (ctx, update, offer, network) => {
-    const adTitle = offer.replace(/([a-z])([A-Z])/g, '$1+$2');
 
-    try{
-        if (network === 'Facebook') {
-            return `${update.data}/?adtitle=${adTitle}${process.env.FACEBOOK_URL}`;
-        } else if (network === 'TikTok') {
-            return `${update.data}/?adtitle=${adTitle}${process.env.TIKTOK_URL}`;
-        }
-
-        LOG(username, 'Helpers/Sheet/CreateURL')
-    } catch (error){
-        LOG(username, 'Helpers/Sheet/CreateURL', error)
-    }
-};
-
-// UpdateRowData
-const UpdateRowData = (ctx, row, update, offer) => {
-    const { username } = ctx.message.from;
-    const updateMap = { status: 0, network: 1 };
-
-    try{
-        if (update.type in updateMap) {
-            row._rawData[updateMap[update.type]] = update.data;
-        } else if (update.type === 'href' && (row._rawData[1] === 'Facebook' || row._rawData[1] === 'TikTok')) {
-            row._rawData[3] = CreateURL(ctx, update, offer, row._rawData[1]);
-            row._rawData[0] = 'Cloudflare';
-        }
-
-        LOG(username, 'Helpers/Sheet/UpdateRowData')
-    } catch (error){
-        LOG(username, 'Helpers/Sheet/UpdateRowData', error)
-    }
-};
-
-// Save Sheet
+//* START - SaveSheet | Сохранение изменений в GoogleSheet таблице
 const SaveSheet = async (ctx, sheet_id, name, update) => {
     const { username } = ctx.message.from;
     try {
@@ -100,6 +72,11 @@ const SaveSheet = async (ctx, sheet_id, name, update) => {
     } catch (error) {
         LOG(username, 'Helpers/Sheet/SaveSheet', error)
     }
-};
+}
+//* END - SaveSheet
 
-module.exports = { LoadSheet, SaveSheet }
+
+module.exports = { 
+    LoadSheet, 
+    SaveSheet 
+}

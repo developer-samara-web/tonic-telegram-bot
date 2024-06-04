@@ -1,9 +1,12 @@
-//Require
-const { LOG } = require('@helpers/helpers')
+//? SCENES | USERS
+
+//* Requires
+const { LOG } = require('@helpers/base')
 const { HasAdminAccess } = require('@helpers/users')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
-//TonicScene
+
+//* START - TonicScene
 const UsersScene = new BaseScene('users');
 UsersScene.enter(async (ctx) => {
     const { username, id } = ctx.message.from
@@ -21,5 +24,7 @@ UsersScene.enter(async (ctx) => {
         LOG(username, 'Scenes/Admin/Users/UsersScene', error)
     }
 });
+//* END- TonicScene
+
 
 module.exports = UsersScene

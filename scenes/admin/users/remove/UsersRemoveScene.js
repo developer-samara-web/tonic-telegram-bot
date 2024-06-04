@@ -1,9 +1,12 @@
-//Require
-const { LOG } = require('@helpers/helpers')
+//? SCENES | USERSREMOVE
+
+//* Requires
+const { LOG } = require('@helpers/base')
 const { Scenes, Composer } = require('telegraf')
 const { UsersRemoveMiddleware } = require('@middlewares/UsersMiddlewares')
 
-//Stage Id
+
+//* START - StageId
 const stageId = new Composer()
 stageId.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -12,15 +15,17 @@ stageId.on('text', async (ctx) => {
         ctx.wizard.state.data = {}
         await ctx.replyWithHTML('1️⃣ <b>Укажите id пользователя:</b>')
 
-        LOG(username, 'Scenes/Users/UsersRemoveScene/stageId')
+        LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageId')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/Users/UsersRemoveScene/stageId', error)
+        LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageId', error)
         return ctx.scene.leave()
     }
 })
+//* END - StageId
 
-//Stage Result
+
+//* START - StageResult
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
@@ -36,15 +41,17 @@ stageResult.on('message', async (ctx) => {
             await ctx.replyWithHTML(`🚫 <b>Ошибка удаления пользователя.</b>`)
         }
 
-        LOG(username, 'Scenes/Users/UsersRemoveScene/StageResult')
+        LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/Users/UsersRemoveScene/StageResult', error)
+        LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageResult', error)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('users')
     }
 })
+//* END - StageResult
+
 
 const UsersRemoveScene = new Scenes.WizardScene('UsersRemoveWizard', stageId, stageResult)
 module.exports = UsersRemoveScene

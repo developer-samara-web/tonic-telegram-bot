@@ -1,12 +1,13 @@
-//? PERMISSIONS.JS
+//? HELPERS | PERMISSIONS
 
-//Require
+//* Requires
 const { Bot } = require('@config/telegram')
-const { LOG } = require('@helpers/helpers')
+const { LOG } = require('@helpers/base')
 const { HasAccess, GrantAccess, HasAdminAccess, GrantAdminAccess } = require('@helpers/users');
 const { Markup } = require('telegraf')
 
-//Permissions
+
+//* START - Permissions | Проверка прав доступа
 const Permissions = async (ctx, scene, func = null) => {
     const username = ctx.message?.from?.username || 'BOT';
     try {
@@ -29,8 +30,10 @@ const Permissions = async (ctx, scene, func = null) => {
         LOG(username, 'Helpers/Permissions/Permissions', error)
     }
 }
+//* END - Permissions
 
-//Permissions Admin
+
+//* START - PermissionsAdmin | Проверка прав доступа администратора
 const PermissionsAdmin = async (ctx, scene, func = null) => {
     const username = ctx.message?.from?.username || 'BOT';
     try {
@@ -53,8 +56,10 @@ const PermissionsAdmin = async (ctx, scene, func = null) => {
         LOG(username, 'Helpers/Permissions/PermissionsAdmin', error)
     }
 }
+//* END - PermissionsAdmin
 
-//Permissions Access
+
+//* START - PermissionsAccess | Запрос на получение доступа
 const PermissionsAccess = async (ctx) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
@@ -79,9 +84,11 @@ const PermissionsAccess = async (ctx) => {
     } catch (error) {
         LOG(username, 'Helpers/Permissions/PermissionsAccess', error);
     }
-};
+}
+//* END - PermissionsAccess
 
-//Permissions Action
+
+//* START - PermissionsAction | Подтверждение на выдачу прав доступа
 const PermissionsAction = async (ctx) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
@@ -104,9 +111,11 @@ const PermissionsAction = async (ctx) => {
     } catch (error) {
         LOG(username, 'Helpers/Permissions/PermissionsAction', error);
     }
-};
+}
+//* END - PermissionsAction
 
-//Permissions Admin Access
+
+//* START - PermissionsAdminAccess | Запрос на получение доступа администратора
 const PermissionsAdminAccess = async (ctx) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
@@ -129,9 +138,11 @@ const PermissionsAdminAccess = async (ctx) => {
     } catch (error) {
         LOG(username, 'Helpers/Permissions/PermissionsAdminAccess', error);
     }
-};
+}
+//* END - PermissionsAdminAccess
 
-//Permissions Admin Action
+
+//* START - PermissionsAdminAction | Подтверждение на выдачу прав доступа администратора
 const PermissionsAdminAction = async (ctx) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
@@ -154,6 +165,15 @@ const PermissionsAdminAction = async (ctx) => {
     } catch (error) {
         LOG(username, 'Helpers/Permissions/PermissionsAdminAction', error);
     }
-};
+}
+//* END - PermissionsAdminAction
 
-module.exports = { Permissions, PermissionsAdmin, PermissionsAction, PermissionsAccess, PermissionsAdminAccess, PermissionsAdminAction }
+
+module.exports = { 
+    Permissions, 
+    PermissionsAdmin, 
+    PermissionsAction, 
+    PermissionsAccess, 
+    PermissionsAdminAccess, 
+    PermissionsAdminAction 
+}

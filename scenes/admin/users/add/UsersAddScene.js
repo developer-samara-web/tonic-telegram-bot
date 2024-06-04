@@ -1,9 +1,12 @@
-//Require
-const { LOG } = require('@helpers/helpers')
+//? SCENES | USERSADD
+
+//* Requires
+const { LOG } = require('@helpers/base')
 const { Scenes, Composer } = require('telegraf')
 const { UsersAddMiddleware } = require('@middlewares/UsersMiddlewares')
 
-//Stage Id
+
+//* START - StageId
 const stageId = new Composer()
 stageId.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -12,15 +15,17 @@ stageId.on('text', async (ctx) => {
         ctx.wizard.state.data = {}
         await ctx.replyWithHTML('1️⃣ <b>Укажите id пользователя:</b>')
 
-        LOG(username, 'Scenes/Admin/User/AddUser/stageId')
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageId')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/User/AddUser/stageId', error)
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageId', error)
         return ctx.scene.leave()
     }
 })
+//* END - StageId
 
-//Stage Username
+
+//* START - StageUsername
 const stageUsername = new Composer()
 stageUsername.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -29,19 +34,21 @@ stageUsername.on('text', async (ctx) => {
         ctx.wizard.state.data.id = ctx.message.text
         await ctx.replyWithHTML('2️⃣ <b>Укажите Username пользователя:</b>')
 
-        LOG(username, 'Scenes/Admin/User/AddUser/stageUsername')
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageUsername')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/User/AddUser/stageUsername', error)
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageUsername', error)
         return ctx.scene.leave()
     }
 })
+//* END - StageUsername
 
-//Stage Result
+
+//* START - StageResult
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
-    
+
     try {
         ctx.wizard.state.data.name = ctx.message.text
         const { message_id } = await ctx.replyWithHTML(`♻️ <b>Добавляем пользователя...</b>`)
@@ -54,15 +61,17 @@ stageResult.on('message', async (ctx) => {
             await ctx.replyWithHTML(`🚫 <b>Ошибка добавления.</b>`)
         }
 
-        LOG(username, 'Scenes/Admin/User/AddUser/StageResult')
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/User/AddUser/StageResult', error)
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageResult', error)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('users')
     }
 })
+//* END - StageResult
+
 
 const UsersAddScene = new Scenes.WizardScene('UsersAddWizard', stageId, stageUsername, stageResult)
 module.exports = UsersAddScene

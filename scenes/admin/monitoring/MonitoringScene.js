@@ -1,11 +1,12 @@
-//? ADMINSCENE.JS
+//? SCENES | MONITORING
 
-//Require
-const { LOG } = require('@helpers/helpers')
+//* Requires
+const { LOG } = require('@helpers/base')
 const { HasAdminAccess } = require('@helpers/users')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
-//TonicScene
+
+//* START - MonitoringScene
 const MonitoringScene = new BaseScene('monitoring');
 MonitoringScene.enter(async (ctx) => {
     const { username, id } = ctx.message.from
@@ -18,10 +19,12 @@ MonitoringScene.enter(async (ctx) => {
             ['🔺 На главную'],
         ]).resize().oneTime());
         
-        LOG(username, 'Scenes/Admin/MonitoringScene')
+        LOG(username, 'Scenes/Admin/Monitoring/MonitoringScene')
     } catch (error) {
-        LOG(username, 'Scenes/Admin/MonitoringScene', error)
+        LOG(username, 'Scenes/Admin/Monitoring/MonitoringScene', error)
     }
 })
+//* END - MonitoringScene
+
 
 module.exports = MonitoringScene

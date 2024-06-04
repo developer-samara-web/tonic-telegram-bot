@@ -1,11 +1,12 @@
-//? USERS.JS
+//? HELPERS | USERS
 
-// Requires
+//* Requires
 const fs = require('fs')
 const list = require('@data/users.json')
-const { LOG } = require('@helpers/helpers')
+const { LOG } = require('@helpers/base')
 
-// Load Users
+
+//* START - LoadUsers | Получаем список пользователей
 const LoadUsers = (ctx) => {
     const { username } = ctx.message.from
     try {
@@ -16,8 +17,10 @@ const LoadUsers = (ctx) => {
         return false
     }
 }
+//* END - LoadUsers
 
-//Add User
+
+//* START - AddUser | Добавляем пользователя
 const AddUser = (ctx, id, name) => {
     const { username } = ctx.message.from
     try {
@@ -36,12 +39,13 @@ const AddUser = (ctx, id, name) => {
         return false;
     }
 }
+//* END - AddUser
 
-// Save Users
+
+//* START - SaveUsers | Сохраняем пользователя
 const SaveUsers = (ctx, user, update) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
-        console.log(update)
         fs.writeFileSync('./data/users.json', JSON.stringify(user, null, 4))
 
         LOG(username, 'Helpers/Users/SaveUsers')
@@ -51,8 +55,10 @@ const SaveUsers = (ctx, user, update) => {
         return false
     }
 }
+//* END - SaveUsers
 
-// Remove User
+
+//* START - RemoveUser | Удаляем пользователя
 const RemoveUser = (ctx, id) => {
     const { username } = ctx.message.from
     try {
@@ -71,8 +77,10 @@ const RemoveUser = (ctx, id) => {
         return false
     }
 }
+//* END - RemoveUser
 
-// Grant Access
+
+//* START - GrantAccess | Выдаём доступ к боту
 const GrantAccess = (ctx, id, name) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
@@ -86,9 +94,11 @@ const GrantAccess = (ctx, id, name) => {
         LOG(username, 'Helpers/Users/GrantAccess', error)
         return false
     }
-};
+}
+//* END - GrantAccess
 
-// Grant Admin Access
+
+//* START - GrantAdminAccess | Даём доступ администратора
 const GrantAdminAccess = (ctx, id) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
     try {
@@ -104,9 +114,11 @@ const GrantAdminAccess = (ctx, id) => {
         LOG(username, 'Helpers/Users/GrantAdminAccess', error)
         return false
     }
-};
+}
+//* END - GrantAdminAccess
 
-// Deny Access
+
+//* START - DenyAccess | Запрещаем доступ
 const DenyAccess = (ctx, id) => {
     const { username } = ctx.message.from
     try {
@@ -121,9 +133,11 @@ const DenyAccess = (ctx, id) => {
         LOG(username, 'Helpers/Users/DenyAccess', error)
         return false
     }
-};
+}
+//* END - DenyAccess
 
-// Has Access
+
+//* START - HasAccess | Проверяем доступы 'user'
 const HasAccess = (ctx, id) => {
     const { username } = ctx.message.from
     try {
@@ -135,16 +149,18 @@ const HasAccess = (ctx, id) => {
         LOG(username, 'Helpers/Users/HasAccess', error)
         return false
     }
-};
+}
+//* END - HasAccess
 
-// Has Admin Access
+
+//* START - HasAdminAccess | Проверяем доступы 'admin'
 const HasAdminAccess = (ctx, id) => {
     const { username } = ctx.message.from
     try {
         const update = list
         const { role } = update.find(user => user.id === id);
 
-        if( role === 'admin'){
+        if (role === 'admin') {
             LOG(username, 'Helpers/Users/HasAdminAccess')
             return true
         } else {
@@ -155,8 +171,11 @@ const HasAdminAccess = (ctx, id) => {
         LOG(username, 'Helpers/Users/HasAdminAccess', error)
         return false
     }
-};
+}
+//* END - HasAdminAccess
 
+
+//* START - SheetAdd | Добавляем пользователю sheet_id
 const SheetAdd = async (ctx, sheet_id) => {
     const { username, id } = ctx.message.from
     try {
@@ -171,6 +190,19 @@ const SheetAdd = async (ctx, sheet_id) => {
         LOG(username, 'Helpers/Users/SheetAdd', error)
         return false
     }
-};
+}
+//* END - SheetAdd
 
-module.exports = { LoadUsers, AddUser, SaveUsers, RemoveUser, GrantAccess, DenyAccess, HasAccess, HasAdminAccess, SheetAdd, GrantAdminAccess }
+
+module.exports = { 
+    LoadUsers, 
+    AddUser, 
+    SaveUsers, 
+    RemoveUser, 
+    GrantAccess, 
+    DenyAccess, 
+    HasAccess, 
+    HasAdminAccess, 
+    SheetAdd, 
+    GrantAdminAccess 
+}

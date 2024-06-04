@@ -1,9 +1,10 @@
-//? USERSMESSAGES.JS
+//? MIDDLEWARES | USERS
 
-// Require
-const { LOG } = require('@helpers/helpers')
+//* Requires
+const { LOG } = require('@helpers/base')
 
-// User Add Message
+
+//* START - UsersAddMessage
 const UsersAddMessage = async (ctx, status, id, name) => {
     const { username } = ctx.message.from
     try {
@@ -16,8 +17,10 @@ const UsersAddMessage = async (ctx, status, id, name) => {
         LOG(username, 'Messages/Users/UsersAddMessage', error)
     }
 }
+//* END - UsersAddMessage
 
-// Users Remove Message
+
+//* START - UsersRemoveMessage
 const UsersRemoveMessage = async (ctx, status, id) => {
     const { username } = ctx.message.from
     try {
@@ -30,8 +33,10 @@ const UsersRemoveMessage = async (ctx, status, id) => {
         LOG(username, 'Messages/Users/UsersRemoveMessage', error)
     }
 }
+//* END - UsersRemoveMessage
 
-// Users List Message
+
+//* START - UsersListMessage
 const UsersListMessage = async (ctx, users) => {
     const { username } = ctx.message.from
     try {
@@ -47,5 +52,11 @@ const UsersListMessage = async (ctx, users) => {
         LOG(username , 'Messages/Users/UsersListMessage', error)
     }
 }
+//* END - UsersListMessage
 
-module.exports = { UsersAddMessage, UsersRemoveMessage, UsersListMessage }
+
+module.exports = { 
+    UsersAddMessage, 
+    UsersRemoveMessage, 
+    UsersListMessage 
+}

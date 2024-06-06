@@ -7,7 +7,7 @@ const { StatusMessage, StatisticsMessage, KeywordMessage, CreateMessage, Company
 
 
 //* START - CreateMiddleware / Создание компании
-const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, pixel, token, target, event }) => {
+const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, pixel, token, target, event }, mode) => {
     const { username } = ctx.message.from
     try {
         const StageCreate = await Create(ctx, name, offer, country)
@@ -17,7 +17,11 @@ const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, p
         const StagePixel = pixel != '🚫 Пропустить' || token != '🚫 Пропустить' || target != '🚫 Пропустить' || event != '🚫 Пропустить' ? await Pixel(ctx, Number(StageId[0].id), pixel, token, target, event) : false
 
         LOG(username, 'Middlewares/Tonic/CreateMiddleware');
-        return await CreateMessage(ctx, name, StageCreate, StageId, StageKeyword, StageCallback, StagePixel)
+        if(mode){
+            return true
+        } else {
+            return await CreateMessage(ctx, name, StageCreate, StageId, StageKeyword, StageCallback, StagePixel)
+        }
     } catch (error) {
         LOG(username, 'Middlewares/Tonic/CreateMiddleware', error)
     }

@@ -44,13 +44,17 @@ const LoadSheet = async (ctx, sheet_id) => {
 
 
 //* START - SearchSheet | Поиск строк в GoogleSheet таблице
-const SearchSheet = async (ctx, sheet_id, name) => {
+const SearchSheet = async (ctx, sheet_id, name, status) => {
     const { username } = ctx.message.from
     try {
         const rows = await LoadSheet(ctx, sheet_id);
 
         LOG(username, 'Helpers/Sheet/SearchSheet')
-        return rows.find(row => row._rawData[2] === name)
+        if (status){
+            return rows.filter(row => row._rawData[0] === status)
+        } else {
+            return rows.find(row => row._rawData[2] === name)
+        }
     } catch (error) {
         LOG(username, 'Helpers/Sheet/SearchSheet', error)
     }
@@ -64,7 +68,7 @@ const SaveSheet = async (ctx, sheet_id, name, update) => {
     try {
         const row = await SearchSheet(ctx, sheet_id, name);
         const [offer] = name.split('_');
-
+        
         UpdateRowData(ctx, row, update, offer);
         LOG(username, 'Helpers/Sheet/SaveSheet')
 
@@ -78,5 +82,6 @@ const SaveSheet = async (ctx, sheet_id, name, update) => {
 
 module.exports = { 
     LoadSheet, 
-    SaveSheet 
+    SaveSheet,
+    SearchSheet
 }

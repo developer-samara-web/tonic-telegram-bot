@@ -1,6 +1,6 @@
 {
   "name": "tonic-telegram-bot",
-  "version": "0.5.0",
+  "version": "0.8.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -22,12 +22,14 @@
     "telegraf": "^4.16.3"
   },
   "_moduleAliases": {
+    "@actions": "actions",
     "@config": "config",
     "@data": "data",
     "@helpers": "helpers",
     "@messages": "messages",
     "@middlewares": "middlewares",
     "@requests": "requests",
+    "@notifications": "notifications",
     "@scenes": "scenes"
   }
 }

@@ -4,6 +4,7 @@
 const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
+const { Markup } = require('telegraf')
 
 
 //* START - Logger
@@ -222,15 +223,15 @@ const CreateURL = (ctx, update, offer, network) => {
     const { username } = ctx.message.from
     const adTitle = offer.replace(/([a-z])([A-Z])/g, '$1+$2');
 
-    try{
-        if (network === 'Facebook') {
+    try {
+        if (network === 'facebook') {
             return `${update.data}/?adtitle=${adTitle}${process.env.FACEBOOK_URL}`;
-        } else if (network === 'TikTok') {
+        } else if (network === 'tikTok') {
             return `${update.data}/?adtitle=${adTitle}${process.env.TIKTOK_URL}`;
         }
 
         LOG(username, 'Helpers/Base/CreateURL')
-    } catch (error){
+    } catch (error) {
         LOG(username, 'Helpers/Base/CreateURL', error)
     }
 }
@@ -242,27 +243,61 @@ const UpdateRowData = (ctx, row, update, offer) => {
     const { username } = ctx.message.from;
     const updateMap = { status: 0, network: 1 };
 
-    try{
+    try {
+
         if (update.type in updateMap) {
             row._rawData[updateMap[update.type]] = update.data;
-        } else if (update.type === 'href' && (row._rawData[1] === 'Facebook' || row._rawData[1] === 'TikTok')) {
-            row._rawData[3] = CreateURL(ctx, update, offer, row._rawData[1]);
-            row._rawData[0] = 'Cloudflare';
+        } else if (update.type === 'href' && (row._rawData[1] === 'facebook' || row._rawData[1] === 'tiktok')) {
+            row._rawData[3] = CreateURL(ctx, update, offer, row._rawData[1])
+            row._rawData[0] = 'Cloudflare'
         }
 
         LOG(username, 'Helpers/Base/UpdateRowData')
-    } catch (error){
+    } catch (error) {
         LOG(username, 'Helpers/Base/UpdateRowData', error)
     }
-};
+}
+//* END - UpdateRowData
 
-module.exports = { 
-    LOG, 
-    Archive, 
-    GroupByDate, 
-    CalculateStatistics, 
-    FilterKeyword, 
-    FilterStats, 
+
+//* START - SendAdminMessage
+const SendAdminMessage = async (ctx, username) => {
+    return await ctx.telegram.sendMessage(process.env.TELEGRAM_ADMIN_ID, `♻️ <b>Новые ссылки от <i>${username}</i>, загружаю...</b>`, {
+        parse_mode: 'HTML'
+    });
+}
+//* END - SendAdminMessage
+
+
+//* START - EditAdminMessage
+const EditAdminMessage = async (ctx, message_id, username, keyboard) => {
+    await ctx.telegram.editMessageText(process.env.TELEGRAM_ADMIN_ID, message_id, null, `♻️ <b>Заявка №${message_id} | Новые ссылки от <i>${username}</i></b>`, {
+        parse_mode: 'HTML',
+        reply_markup: keyboard.reply_markup
+    });
+}
+//* END - EditAdminMessage
+
+
+//* START - CreateKeyboard
+const CreateKeyboard = (id, message_id) => {
+    return Markup.inlineKeyboard([
+        Markup.button.callback('✅ Выполнено', JSON.stringify({ action: 'complite', id, message_id }))
+    ]);
+}
+//* END - CreateKeyboard
+
+
+module.exports = {
+    LOG,
+    Archive,
+    GroupByDate,
+    CalculateStatistics,
+    FilterKeyword,
+    FilterStats,
     UpdateRowData,
-    DateCurent
+    DateCurent,
+    SendAdminMessage,
+    EditAdminMessage,
+    CreateKeyboard
 }

@@ -19,6 +19,19 @@ const LoadUsers = (ctx) => {
 }
 //* END - LoadUsers
 
+//* START - GetUser | Получаем данных пользователя
+const GetUser = (ctx, id) => {
+    const { username } = ctx.message.from
+    try {
+        LOG(username, 'Helpers/Users/LoadUsers')
+        return list.find(item => item.id == id)
+    } catch (error) {
+        LOG(username, 'Helpers/Users/LoadUsers', error)
+        return false
+    }
+}
+//* END - GetUser
+
 
 //* START - AddUser | Добавляем пользователя
 const AddUser = (ctx, id, name) => {
@@ -194,6 +207,25 @@ const SheetAdd = async (ctx, sheet_id) => {
 //* END - SheetAdd
 
 
+//* START - OfferAdd | Добавляем пользователю оффер Tonic
+const OfferAdd = async (ctx, offer) => {
+    const { username, id } = ctx.message.from
+    try {
+        const update = list
+        const index = update.findIndex(user => user.id == id)
+
+        update[index].offer.push(offer)
+
+        LOG(username, 'Helpers/Users/OfferAdd')
+        return SaveUsers(ctx, list, update);
+    } catch (error) {
+        LOG(username, 'Helpers/Users/OfferAdd', error)
+        return false
+    }
+}
+//* END - OfferAdd
+
+
 module.exports = { 
     LoadUsers, 
     AddUser, 
@@ -203,6 +235,8 @@ module.exports = {
     DenyAccess, 
     HasAccess, 
     HasAdminAccess, 
-    SheetAdd, 
-    GrantAdminAccess 
+    SheetAdd,
+    OfferAdd,
+    GetUser,
+    GrantAdminAccess
 }

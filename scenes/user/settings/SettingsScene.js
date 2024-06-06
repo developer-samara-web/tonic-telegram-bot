@@ -13,6 +13,7 @@ SettingsScene.enter(async (ctx) => {
     try {
         await ctx.replyWithHTML('<b>🔹 USER PANEL 🔹</b> Выберите действие:', Markup.keyboard([
             ['🔹 Добавить таблицу'],
+            ['🔹 Добавить оффер'],
             ['🔹 Повысить уровень'],
             ['🔺 На главную'],
         ]).resize().oneTime());

@@ -21,6 +21,7 @@ module.exports = [
     //* USER
     require('@scenes/user/settings/SettingsScene'),
     require('@scenes/user/settings/sheet/SheetAddScene'),
+    require('@scenes/user/settings/offer/OfferAddScene'),
 
     //* ADMIN
     require('@scenes/admin/AdminScene'),

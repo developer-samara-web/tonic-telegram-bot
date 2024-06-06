@@ -27,6 +27,8 @@ const MonitoringMiddleware = async (ctx) => {
             await SaveSheet(ctx, link.sheet_id, link.name, { type: 'href', data: `https://${item['0'].link}` });
             list.data = list.data.filter(item => item.name !== link.name);
             await UpdateMonitoring('./data/monitoring.json', list);
+
+            //MessageAdmin
         }
     }
 
@@ -56,6 +58,36 @@ const MonitoringMiddleware = async (ctx) => {
 //* END - MonitoringMiddleware
 
 
+//* START - MonitoringAddMiddleware / Переключатель работы мониторинга
+const MonitoringAddMiddleware = async (ctx, name, sheet_id) => {
+    const { username } = ctx.message.from
+    try {
+        const LoadMonitoring = async (filePath) => {
+            const fileContents = await fs.promises.readFile(filePath, 'utf8');
+            return JSON.parse(fileContents);
+        }
+        
+        const UpdateMonitoring = async (filePath, data) => {
+            await fs.promises.writeFile(filePath, JSON.stringify(data, null, 4));
+        }
+
+        const list = await LoadMonitoring('./data/monitoring.json')
+
+        list.data.push({
+            name,
+            sheet_id
+        })
+
+        UpdateMonitoring('./data/monitoring.json', list)
+
+        LOG(username, 'Messages/Monitoring/MonitoringAddMiddleware')
+    } catch (error) {
+        LOG(username, 'Messages/Monitoring/MonitoringAddMiddleware', error)
+    }
+}
+//* END - MonitoringAddMiddleware
+
+
 //* START - MonitoringSwitcherMiddleware/ Переключатель работы мониторинга
 const MonitoringSwitcherMiddleware = async (ctx, status) => {
     const { username } = ctx.message.from
@@ -79,6 +111,7 @@ const MonitoringSwitcherMiddleware = async (ctx, status) => {
 
 
 module.exports = { 
+    MonitoringAddMiddleware, 
     MonitoringMiddleware, 
     MonitoringSwitcherMiddleware 
 }

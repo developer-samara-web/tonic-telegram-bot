@@ -3,7 +3,7 @@
 //* Require
 const { LOG } = require('@helpers/base')
 const { UsersAddMessage, UsersRemoveMessage, UsersListMessage } = require('@messages/UsersMessages')
-const { AddUser, RemoveUser, LoadUsers, SheetAdd } = require('@helpers/users')
+const { AddUser, RemoveUser, LoadUsers, SheetAdd, OfferAdd } = require('@helpers/users')
 
 
 //* START - UsersAddMiddleware / Добавление пользователей
@@ -68,9 +68,23 @@ const UsersSheetAddMiddleware = async (ctx, sheet_id) => {
 //* END - UsersSheetAddMiddleware
 
 
+//* START - UsersOfferAddMiddleware / Добавление оффера Tonic
+const UsersOfferAddMiddleware = async (ctx, offer) => {
+    const { username } = ctx.message.from
+    try {
+        LOG(username, 'Middlewares/Users/UsersOfferAddMiddleware')
+        return await OfferAdd(ctx, offer)
+    } catch (error) {
+        LOG(username, 'Middlewares/Users/UsersOfferAddMiddleware', error)
+    }
+}
+//* END - UsersOfferAddMiddleware
+
+
 module.exports = {
     UsersAddMiddleware,
     UsersRemoveMiddleware,
     UsersListMiddleware,
-    UsersSheetAddMiddleware
+    UsersSheetAddMiddleware,
+    UsersOfferAddMiddleware
 }

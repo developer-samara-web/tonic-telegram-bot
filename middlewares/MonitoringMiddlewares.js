@@ -5,6 +5,7 @@ const fs = require('fs');
 const { LOG } = require('@helpers/base')
 const { Status } = require('@helpers/tonic')
 const { SaveSheet } = require('@helpers/sheet')
+const { Bot } = require('@config/telegram')
 
 
 //* START - MonitoringMiddleware / Мониторинг и создание компаний
@@ -28,7 +29,9 @@ const MonitoringMiddleware = async (ctx) => {
             list.data = list.data.filter(item => item.name !== link.name);
             await UpdateMonitoring('./data/monitoring.json', list);
 
-            //MessageAdmin
+            await Bot.telegram.sendMessage(process.env.TELEGRAM_ADMIN_ID, `✅ <b>Заявка: №${message_id} | ${item.name} обновлена</b>`, {
+                parse_mode: 'HTML'
+            })
         }
     }
 

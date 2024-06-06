@@ -3,15 +3,17 @@
 //* Requires
 const { LOG } = require('@helpers/base')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
+const { GetUser } = require('@helpers/users')
 
 
 //* START - SettingsScene
 const SettingsScene = new BaseScene('settings');
 SettingsScene.enter(async (ctx) => {
-    const { username } = ctx.message.from
-    
+    const { username, id } = ctx.message.from
+    const { name, role, sheet, domain } = await GetUser(ctx, id)
+
     try {
-        await ctx.replyWithHTML('<b>🔹 USER PANEL 🔹</b> Выберите действие:', Markup.keyboard([
+        await ctx.replyWithHTML(`<b>❇️  USER PANEL |</b> Информация пользователя:\n\n<b>▫️ [ ID ]: <i>${id}</i>\n▫️ [ Ник ]: <i>${name}</i>\n▫️ [ Роль ]: <i>${role}</i>\n▫️ [ Домен ]: <i>${domain}</i>\n▫️ [ Таблица ]: <i>${sheet}</i></b>`, Markup.keyboard([
             ['🔹 Добавить таблицу', '🔹 Добавить домен'],
             ['🔹 Добавить оффер', '🔹 Повысить уровень'],
             ['🔺 На главную'],

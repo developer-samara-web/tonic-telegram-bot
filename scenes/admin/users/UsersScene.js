@@ -13,7 +13,7 @@ UsersScene.enter(async (ctx) => {
     const admin = await HasAdminAccess(ctx, id)
 
     try {
-        await ctx.replyWithHTML('<b>🔹 USERS PANEL 🔹</b> Выберите действие:', Markup.keyboard([
+        await ctx.replyWithHTML('<b>❇️  USERS PANEL |</b> Выберите действие:', Markup.keyboard([
             [ admin ? '🔹 Добавить' : '🔺 Повысить права', admin ? '🔹 Удалить' : '🔺 Повысить права'],
             [ admin ? '🔹 Список пользователей' : '🔺 Повысить права'],
             ['🔺 На главную'],

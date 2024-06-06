@@ -14,7 +14,7 @@ MonitoringScene.enter(async (ctx) => {
     const admin = await HasAdminAccess(ctx, id)
     
     try {
-        await ctx.replyWithHTML(`<b>🔹 MONITORING PANEL 🔹</b> :  ${status ? '✅ Активно' : '🚫 Выключено'}`, Markup.keyboard([
+        await ctx.replyWithHTML(`<b>❇️  MONITORING PANEL |</b> :  ${status ? '✅ Активно' : '🚫 Выключено'}`, Markup.keyboard([
             [ admin ? '🔹 Включить' : '🔺 Повысить права', admin ? '🔻 Выключить' : '🔺 Повысить права'],
             ['🔺 На главную'],
         ]).resize().oneTime());

@@ -13,7 +13,7 @@ TonicEditsScene.enter(async (ctx) => {
     try {
         const admin = await HasAdminAccess(ctx, id)
 
-        await ctx.replyWithHTML('<b>🔹 TONIC EDITS PANEL 🔹</b> Выберите действие:', Markup.keyboard([
+        await ctx.replyWithHTML('<b>❇️  TONIC EDITS PANEL |</b> Выберите действие:', Markup.keyboard([
             ['🔹 Добавить пиксель', '🔹 Добавть ключи'],
             ['🔻 Назад'],
         ]).resize().oneTime());

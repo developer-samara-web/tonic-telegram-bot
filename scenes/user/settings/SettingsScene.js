@@ -13,7 +13,7 @@ SettingsScene.enter(async (ctx) => {
     const { name, role, sheet, domain } = await GetUser(ctx, id)
 
     try {
-        await ctx.replyWithHTML(`<b>❇️  USER PANEL |</b> Информация пользователя:\n\n<b>▫️ [ ID ]: <i>${id}</i>\n▫️ [ Ник ]: <i>${name}</i>\n▫️ [ Роль ]: <i>${role}</i>\n▫️ [ Домен ]: <i>${domain}</i>\n▫️ [ Таблица ]: <i>${sheet}</i></b>`, Markup.keyboard([
+        await ctx.replyWithHTML(`<b>❇️  USER PANEL |</b> Информация пользователя:\n\n<b>▫️ [ ID ]: <i>${id}</i>\n▫️ [ Ник ]: <i>${name}</i>\n▫️ [ Роль ]: <i>${role}</i>\n▫️ [ Домен ]: <i>${domain ? domain : 'Не установлен'}</i>\n▫️ [ Таблица ]: <i>${sheet ? sheet : 'Не установлена'}</i></b>`, Markup.keyboard([
             ['🔹 Добавить таблицу', '🔹 Добавить домен'],
             ['🔹 Добавить оффер', '🔹 Повысить уровень'],
             ['🔺 На главную'],

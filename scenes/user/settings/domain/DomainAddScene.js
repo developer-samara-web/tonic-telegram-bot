@@ -13,7 +13,7 @@ stageDomainName.on('text', async (ctx) => {
 
     try {
         ctx.wizard.state.data = {}
-        await ctx.replyWithHTML('1️⃣ <b>Отправьте домен ваших постбеков Clickflare:</b>')
+        await ctx.replyWithHTML('<b>♻️ Для установки постбеков пройдите все этапы.</b>\n\n1️⃣ <b>Отправьте домен ваших постбеков Clickflare:</b>')
 
         LOG(username, 'Scenes/User/Settings/domain/DomainAddScene/stageDomainName')
         return ctx.wizard.next()

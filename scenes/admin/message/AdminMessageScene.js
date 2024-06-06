@@ -13,7 +13,7 @@ stageMessage.on('text', async (ctx) => {
 
     try {
         ctx.wizard.state.data = {}
-        await ctx.replyWithHTML('1️⃣ <b>Напишите сообщение:</b>')
+        await ctx.replyWithHTML('<b>♻️ Для отправки сообщения пройдите все этапы.</b>\n\n1️⃣ <b>Напишите сообщение:</b>')
 
         LOG(username, 'Scenes/Admin/Message/AdminMessageScene/stageMessage')
         return ctx.wizard.next()

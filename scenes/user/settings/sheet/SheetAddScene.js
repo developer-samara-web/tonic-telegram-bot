@@ -13,7 +13,7 @@ stageSheetId.on('text', async (ctx) => {
 
     try {
         ctx.wizard.state.data = {}
-        await ctx.replyWithHTML('1️⃣ <b>Отправьте sheet_id:</b>')
+        await ctx.replyWithHTML('<b>♻️ Для добавления таблицы пройдите все этапы.</b>\n\n1️⃣ <b>Отправьте sheet_id:</b>')
 
         LOG(username, 'Scenes/User/Settings/Sheet/SheetAddScene/StageSheetId')
         return ctx.wizard.next()

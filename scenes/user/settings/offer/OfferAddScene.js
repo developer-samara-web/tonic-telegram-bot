@@ -13,7 +13,7 @@ stageOfferName.on('text', async (ctx) => {
 
     try {
         ctx.wizard.state.data = {}
-        await ctx.replyWithHTML('1️⃣ <b>Отправьте полное название оффера:</b>')
+        await ctx.replyWithHTML('<b>♻️ Для добавления оффера пройдите все этапы.</b>\n\n1️⃣ <b>Отправьте полное название оффера:</b>')
 
         LOG(username, 'Scenes/User/Settings/Sheet/OfferAddScene/StageSheetId')
         return ctx.wizard.next()

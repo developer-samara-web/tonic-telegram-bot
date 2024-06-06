@@ -13,7 +13,7 @@ stageId.on('text', async (ctx) => {
 
     try {
         ctx.wizard.state.data = {}
-        await ctx.replyWithHTML('1️⃣ <b>Укажите id пользователя:</b>')
+        await ctx.replyWithHTML('<b>♻️ Для удаления пользователя пройдите все этапы.</b>\n\n1️⃣ <b>Укажите id пользователя:</b>')
 
         LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageId')
         return ctx.wizard.next()

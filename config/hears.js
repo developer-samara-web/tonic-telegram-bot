@@ -40,6 +40,7 @@ module.exports = Bot => {
     Bot.hears('⚙️ Настройки', ctx => Permissions(ctx, 'settings'))
     Bot.hears('🔹 Добавить таблицу', ctx => Permissions(ctx, 'SheetAddWizard'))
     Bot.hears('🔹 Добавить оффер', ctx => Permissions(ctx, 'OfferAddWizard'))
+    Bot.hears('🔹 Добавить домен', ctx => Permissions(ctx, 'DomainAddWizard'))
 
     //* ADMIN
     Bot.hears('⚙️ Панель управления', ctx => PermissionsAdmin(ctx, 'admin'))

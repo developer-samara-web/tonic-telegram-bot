@@ -226,6 +226,25 @@ const OfferAdd = async (ctx, offer) => {
 //* END - OfferAdd
 
 
+//* START - DomainAdd | Добавляем пользователю оффер Tonic
+const DomainAdd = async (ctx, domain) => {
+    const { username, id } = ctx.message.from
+    try {
+        const update = list
+        const index = update.findIndex(user => user.id == id)
+
+        update[index].domain = domain
+
+        LOG(username, 'Helpers/Users/DomainAdd')
+        return SaveUsers(ctx, list, update);
+    } catch (error) {
+        LOG(username, 'Helpers/Users/DomainAdd', error)
+        return false
+    }
+}
+//* END - DomainAdd
+
+
 module.exports = { 
     LoadUsers, 
     AddUser, 
@@ -238,5 +257,6 @@ module.exports = {
     SheetAdd,
     OfferAdd,
     GetUser,
+    DomainAdd,
     GrantAdminAccess
 }

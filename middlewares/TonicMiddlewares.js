@@ -2,7 +2,7 @@
 
 //* Requires
 const { LOG, GroupByDate, CalculateStatistics, FilterKeyword, FilterStats } = require('@helpers/base')
-const { Create, Keywords, Callback, Pixel, Status, Statistics, List } = require('@helpers/tonic')
+const { Create, Keywords, GetKeywords, Callback, GetCallback, Pixel, Status, Statistics, List } = require('@helpers/tonic')
 const { StatusMessage, StatisticsMessage, KeywordMessage, CreateMessage, CompanyMessage } = require('@messages/TonicMessages')
 
 
@@ -35,9 +35,11 @@ const StatusMiddleware = async (ctx, name) => {
     try {
         const response = await Status(ctx, name)
         const item = await SearchMiddleware(ctx, response.status, name)
+        const callback = await GetCallback(ctx, item.id)
+        const keywords = await GetKeywords(ctx, item.id)
 
         LOG(username, 'Middlewares/Tonic/StatusMiddleware')
-        return await StatusMessage(ctx, { status: response.status, ...item })
+        return await StatusMessage(ctx, { status: response.status, ...item }, keywords, callback)
     } catch (error) {
         LOG(username, 'Middlewares/Tonic/StatusMiddleware', error)
     }

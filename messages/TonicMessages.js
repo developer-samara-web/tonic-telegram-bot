@@ -5,12 +5,13 @@ const { LOG } = require('@helpers/base')
 
 
 //* START - StatusMessage
-const StatusMessage = async (ctx, json) => {
+const StatusMessage = async (ctx, json, { Keywords }, { result }) => {
     const { username } = ctx.message.from
     try {
+
         LOG(username, 'Messages/Tonic/StatusMessage')
         return json.status === 'active' ?
-            `✅ <b>ID:${json['0'].id} | ${json['0'].name}</b>\n---------------------------------------------------------------\n<b>Offer:</b> ${json['0'].offer}\n<b>URL:</b> https://${json['0'].link}\n<b>Status:</b> ${json.status}\n---------------------------------------------------------------` :
+            `✅ <b>ID:${json['0'].id} | ${json['0'].name}</b>\n---------------------------------------------------------------\n<b>Offer:</b> ${json['0'].offer}\n<b>URL:</b> https://${json['0'].link}\n<b>Status:</b> ${json.status}\nCallbacks: ${result && result.view && result.click ? 'Установлены' : 'Неустановленны'}\nКлючи: ${Keywords ? Keywords : 'Неустановленны'}---------------------------------------------------------------` :
             json.status === 'pending' ?
                 `🚼 <b>ID:${json['0'].id} | ${json['0'].name}</b>\n---------------------------------------------------------------\n<b>Status:</b> ${json.status}\n---------------------------------------------------------------` :
                 undefined;

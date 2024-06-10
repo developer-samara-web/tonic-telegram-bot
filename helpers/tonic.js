@@ -156,6 +156,22 @@ const Keywords = async (ctx, id, keywords) => {
 //* END - Keywords
 
 
+//* START - GetKeywords | Запрос ключей компании
+const GetKeywords = async (ctx, id) => {
+    const { username } = ctx.message.from
+    try {
+        const token = await Token(ctx)
+        const url = `${process.env.TONIC_API_URL}/campaign/keywords?campaign_id=${id}`;
+
+        LOG(username, 'Helpers/Tonic/GetKeywords')
+        return Request(ctx, 'GET', url, token);
+    } catch (error) {
+        LOG(username, 'Helpers/Tonic/GetKeywords', error)
+    }
+}
+//* END - GetKeywords
+
+
 //* START - Callback | Запрос установки POSTBACK параметров компании
 const Callback = async (ctx, id, domain) => {
     const { username } = ctx.message.from
@@ -182,6 +198,21 @@ const Callback = async (ctx, id, domain) => {
     }
 }
 //* END - Callback
+
+//* START - GetCallback | Запрос POSTBACK параметров компании
+const GetCallback = async (ctx, id) => {
+    const { username } = ctx.message.from
+    try {
+        const token = await Token(ctx)
+        const url = `${process.env.TONIC_API_URL}/campaign/callback?campaign_id=${id}`;
+
+        LOG(username, 'Helpers/Tonic/GetCallback')
+        return await Request(ctx, 'GET', url, token);
+    } catch (error) {
+        LOG(username, 'Helpers/Tonic/GetCallback', error)
+    }
+}
+//* END - GetCallback
 
 
 //* START - Pixel | Запрос установки пикселя компании
@@ -242,7 +273,9 @@ module.exports = {
     Status, 
     Statistics, 
     Keywords, 
+    GetKeywords,
     Callback, 
     Pixel, 
+    GetCallback,
     List 
 }

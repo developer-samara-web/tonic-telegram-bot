@@ -35,8 +35,8 @@ const StatusMiddleware = async (ctx, name) => {
     try {
         const response = await Status(ctx, name)
         const item = await SearchMiddleware(ctx, response.status, name)
-        const callback = await GetCallback(ctx, item.id)
-        const keywords = await GetKeywords(ctx, item.id)
+        const callback = await GetCallback(ctx, item[0].id)
+        const keywords = await GetKeywords(ctx, item[0].id)
 
         LOG(username, 'Middlewares/Tonic/StatusMiddleware')
         return await StatusMessage(ctx, { status: response.status, ...item }, keywords, callback)

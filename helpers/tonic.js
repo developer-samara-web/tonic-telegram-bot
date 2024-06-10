@@ -90,7 +90,7 @@ const Create = async (ctx, name, offer, country) => {
     const { username } = ctx.message.from
     try {
         const token = await Token(ctx)
-        const url = `${process.env.TONIC_API_URL}/campaign/create?name=${name}&offer=${offer}&country=${country}`;
+        const url = `${process.env.TONIC_API_URL}/campaign/create?name=${name}&offer=${offer}&country=${country}&imprint=no`;
 
         LOG(username, 'Requests/Tonic/Create', 'OK')
         return Request(ctx, 'POST', url, token);

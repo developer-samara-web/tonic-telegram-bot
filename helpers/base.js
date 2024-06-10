@@ -226,7 +226,7 @@ const CreateURL = (ctx, update, offer, network) => {
     try {
         if (network === 'facebook') {
             return `${update.data}/?adtitle=${adTitle}${process.env.FACEBOOK_URL}`;
-        } else if (network === 'tikTok') {
+        } else if (network === 'tiktok') {
             return `${update.data}/?adtitle=${adTitle}${process.env.TIKTOK_URL}`;
         }
 

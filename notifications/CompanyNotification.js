@@ -14,12 +14,13 @@ const CompanyNotification = async (ctx) => {
     const { id, username } = ctx.from;
 
     try {
-        const { message_id } = await SendAdminMessage(ctx, username);
         const { sheet, domain } = await GetUser(ctx, id)
 
         const sheetList = await SearchSheet(ctx, sheet, null, 'Создание')
 
-        if(sheetList){
+        if(sheetList.length > 0){
+            const { message_id } = await SendAdminMessage(ctx, username);
+            
             const list = sheetList.map(item => {
                 const [ ,target, name,,pixel,token,,,event,...keywords ] = item._rawData;
                 const country = name.split('_')[1]

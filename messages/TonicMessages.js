@@ -11,7 +11,7 @@ const StatusMessage = async (ctx, json, { Keywords }, { result }) => {
 
         LOG(username, 'Messages/Tonic/StatusMessage')
         return json.status === 'active' ?
-            `✅ <b>ID:${json['0'].id} | ${json['0'].name}</b>\n---------------------------------------------------------------\n<b>Offer:</b> ${json['0'].offer}\n<b>URL:</b> https://${json['0'].link}\n<b>Status:</b> ${json.status}\n<b>Callbacks:</b> ${result && result.view && result.click ? 'Установлены' : 'Неустановленны'}\n<b>Ключи:</b> ${Keywords ? Keywords.join('\n') : 'Неустановленны'}\n---------------------------------------------------------------` :
+            `✅ <b>ID:${json['0'].id} | ${json['0'].name}</b>\n---------------------------------------------------------------\n<b>Offer:</b> ${json['0'].offer}\n<b>URL:</b> https://${json['0'].link}\n<b>Status:</b> ${json.status}\n<b>Callbacks:</b> ${result && result.view && result.click ? 'Установлены' : 'Неустановленны'}\n<b>Ключи:</b> ${Keywords ? '\n🔅' + Keywords.join('\n🔅') : 'Неустановленны'}\n---------------------------------------------------------------` :
             json.status === 'pending' ?
                 `🚼 <b>ID:${json['0'].id} | ${json['0'].name}</b>\n---------------------------------------------------------------\n<b>Status:</b> ${json.status}\n---------------------------------------------------------------` :
                 undefined;

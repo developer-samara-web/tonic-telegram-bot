@@ -16,7 +16,7 @@ StartScene.enter(async (ctx) => {
         await ctx.replyWithPhoto(
             { source: './assets/start.png' },
             {
-                caption: `Приветствую, *${username}*.\nЭто панель управления *GSEARCHBOT*.\n\n❇️ *Обновление 1.0:*\nАвтоматическое создание Tonic ссылок.\n\n*Администратор:* ${process.env.ADMIN_NAME}`,
+                caption: `Приветствую, *${username}*.\nЭто панель управления *GSEARCHBOT*.\n\n❇️ *Обновление 1.0:* [Подробная информация](https://telegra.ph/Obnovlenie-10-06-10)\n\n*Администратор:* ${process.env.ADMIN_NAME}`,
                 parse_mode: 'Markdown',
                 reply_markup: {
                     keyboard: [

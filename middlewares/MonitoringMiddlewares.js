@@ -29,7 +29,7 @@ const MonitoringMiddleware = async (ctx) => {
             list.data = list.data.filter(item => item.name !== link.name);
             await UpdateMonitoring('./data/monitoring.json', list);
 
-            await Bot.telegram.sendMessage(process.env.TELEGRAM_ADMIN_ID, `✅ <b>Заявка: №${message_id} | ${item.name} обновлена</b>`, {
+            await Bot.telegram.sendMessage(process.env.TELEGRAM_ADMIN_ID, `✅ <b>Ссылка: ${link.name} обновлена</b>`, {
                 parse_mode: 'HTML'
             })
         }

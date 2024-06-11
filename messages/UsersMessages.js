@@ -40,10 +40,10 @@ const UsersRemoveMessage = async (ctx, status, id) => {
 const UsersListMessage = async (ctx, users) => {
     const { username } = ctx.message.from
     try {
-        let message = "🌀 <b>Список пользователей:</b>\n\n----------------------------------\n";
+        let message = "🚹 <b>Список пользователей:</b>\n\n----------------------------------\n";
 
         for (const user of users) {
-            message += `<b>Ник:</b>  ${user.name}\n<b>ID:</b>  ${user.id}\n----------------------------------\n`;
+            message += `💠 <b>ID:</b> ${user.id} | <b>Ник:</b> ${user.name}\n----------------------------------\n`;
         }
 
         LOG(username , 'Messages/Users/UsersListMessage')

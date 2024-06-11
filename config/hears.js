@@ -14,6 +14,11 @@ module.exports = Bot => {
     Bot.hears('🔸 Получить доступ', ctx => PermissionsAccess(ctx))
     Bot.hears('🔹 Повысить уровень', ctx => PermissionsAdminAccess(ctx))
 
+    //* MEDIA
+    Bot.hears('🔹 Уникализатор', ctx => Permissions(ctx, 'media'))
+    Bot.hears('🔹 Фото', ctx => Permissions(ctx, 'MediaUnifierPhotoWizard'))
+    Bot.hears('🔹 Видео', ctx => Permissions(ctx, 'MediaUnifierVideoWizard'))
+
     //* TONIC
     Bot.hears(['🔹 Tonic', '🔻 Назад'], ctx => Permissions(ctx, 'tonic'))
     Bot.hears('🔹 Создать', ctx => Permissions(ctx, 'TonicLinkWizard'))

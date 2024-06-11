@@ -18,6 +18,11 @@ module.exports = [
     require('@scenes/user/tonic/statistics/сompany/TonicCompanyScene'),
     require('@scenes/user/tonic/statistics/keywords/TonicKeywordsScene'),
 
+    //* MEDIA
+    require('@scenes/user/media/MediaScene'),
+    require('@scenes/user/media/photo/MediaUnifierPhotoScene'),
+    require('@scenes/user/media/video/MediaUnifierVideoScene'),
+
     //* USER
     require('@scenes/user/settings/SettingsScene'),
     require('@scenes/user/settings/sheet/SheetAddScene'),

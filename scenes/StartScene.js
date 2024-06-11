@@ -20,7 +20,7 @@ StartScene.enter(async (ctx) => {
                 parse_mode: 'Markdown',
                 reply_markup: {
                     keyboard: [
-                        ['🔹 Tonic', '🔻 В разработке'],
+                        ['🔹 Tonic', '🔹 Уникализатор'],
                         [ admin ? '⚙️ Панель управления' : '⚙️ Настройки']
                     ],
                     resize_keyboard: true,

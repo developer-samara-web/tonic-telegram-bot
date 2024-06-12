@@ -59,6 +59,7 @@ stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
 
     try {
+        data.source = ctx.message.text
         const { message_id } = await ctx.replyWithHTML(`♻️ <b>Идёт поиск статистики...</b>`)
         const message = await StatisticsMiddleware(ctx, data)
         await ctx.deleteMessage(message_id);

@@ -251,10 +251,10 @@ const GetSheet = async (ctx) => {
     try {
         const index = list.findIndex(user => user.id == id)
 
-        LOG(username, 'Helpers/Users/SheetAdd')
-        return update[index].sheet;
+        LOG(username, 'Helpers/Users/GetSheet')
+        return list[index].sheet;
     } catch (error) {
-        LOG(username, 'Helpers/Users/SheetAdd', error)
+        LOG(username, 'Helpers/Users/GetSheet', error)
         return false
     }
 }

@@ -5,6 +5,7 @@ const { LOG, GroupByDate, CalculateStatistics, FilterKeyword, FilterStats } = re
 const { Create, Keywords, GetKeywords, Callback, GetCallback, Pixel, Status, Statistics, List } = require('@helpers/tonic')
 const { StatusMessage, StatisticsMessage, KeywordMessage, CreateMessage, CompanyMessage } = require('@messages/TonicMessages')
 const { GetSheet } = require('@helpers/users')
+const { LoadSheet } = require('@helpers/sheet')
 
 
 //* START - CreateMiddleware / Создание компании
@@ -49,12 +50,19 @@ const StatusMiddleware = async (ctx, name) => {
 
 
 //* StatisticsMiddleware / Получение общей статистики компаний
-const StatisticsMiddleware = async (ctx, { date, source, buyer }) => {
+const StatisticsMiddleware = async (ctx, { date, source }) => {
     const { username } = ctx.message.from;
     try {
         const response = await Statistics(ctx, date);
+
         const sheet_id = await GetSheet(ctx)
-        const filter = FilterStats(response, source, sheet_id);
+        const sheet = await LoadSheet(ctx, sheet_id)
+
+        const compains = sheet.map(row => {
+             return row._rawData[2]
+        })
+        
+        const filter = FilterStats(response, source, compains);
 
         LOG(username, 'Middlewares/Tonic/StatisticsMiddleware');
         return await StatisticsMessage(ctx, filter);

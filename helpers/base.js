@@ -203,23 +203,17 @@ const UpdateStatsItem = (existingItem, item) => {
 
 
 //* START - FilterStats
-const FilterStats = (data, source, sheet_id) => {
-    const sheetList = LoadSheet(ctx, sheet_id)
-    const compains = sheetList.map(row => {
-        return row._rawData
-    })
-    console.log(compains)
-
-    // return data.filter(obj => sheet.includes(obj.name) && obj.network === source)
-    //     .reduce((acc, item) => {
-    //         const existingItem = acc.find(group => group.campaign_name === item.campaign_name);
-    //         if (existingItem) {
-    //             UpdateStatsItem(existingItem, item);
-    //         } else {
-    //             acc.push(CreateStatsItem(item));
-    //         }
-    //         return acc;
-    //     }, []);
+const FilterStats = (data, source, compains) => {
+    return data.filter(obj => compains.includes(obj.name) && obj.network === source)
+        .reduce((acc, item) => {
+            const existingItem = acc.find(group => group.campaign_name === item.campaign_name);
+            if (existingItem) {
+                UpdateStatsItem(existingItem, item);
+            } else {
+                acc.push(CreateStatsItem(item));
+            }
+            return acc;
+        }, []);
 }
 //* END - FilterStats
 

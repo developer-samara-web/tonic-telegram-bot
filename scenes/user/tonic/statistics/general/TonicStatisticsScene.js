@@ -52,26 +52,6 @@ stageSource.on('message', async (ctx) => {
 //* END - StageSource
 
 
-//* START - StageBuyer
-const stageBuyer = new Composer()
-stageBuyer.on('message', async (ctx) => {
-    const { data } = ctx.wizard.state
-    const { username } = ctx.message.from
-
-    try {
-        data.source = ctx.message.text
-        await ctx.replyWithHTML('3️⃣ <b>Укажите индификатор баера:</b>')
-
-        LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageBuyer')
-        return ctx.wizard.next()
-    } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageBuyer', error)
-        return ctx.scene.leave()
-    }
-})
-//* END - StageBuyer
-
-
 //* START - StageResult
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
@@ -79,7 +59,6 @@ stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
 
     try {
-        data.buyer = ctx.message.text
         const { message_id } = await ctx.replyWithHTML(`♻️ <b>Идёт поиск статистики...</b>`)
         const message = await StatisticsMiddleware(ctx, data)
         await ctx.deleteMessage(message_id);
@@ -104,5 +83,5 @@ stageResult.on('message', async (ctx) => {
 //* END - StageResult
 
 
-const TonicStatisticsScene = new Scenes.WizardScene('TonicStatisticsWizard', stageData, stageSource, stageBuyer, stageResult)
+const TonicStatisticsScene = new Scenes.WizardScene('TonicStatisticsWizard', stageData, stageSource, stageResult)
 module.exports = TonicStatisticsScene

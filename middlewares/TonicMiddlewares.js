@@ -4,6 +4,7 @@
 const { LOG, GroupByDate, CalculateStatistics, FilterKeyword, FilterStats } = require('@helpers/base')
 const { Create, Keywords, GetKeywords, Callback, GetCallback, Pixel, Status, Statistics, List } = require('@helpers/tonic')
 const { StatusMessage, StatisticsMessage, KeywordMessage, CreateMessage, CompanyMessage } = require('@messages/TonicMessages')
+const { GetSheet } = require('@helpers/users')
 
 
 //* START - CreateMiddleware / Создание компании
@@ -14,7 +15,7 @@ const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, p
         const StageId = await SearchMiddleware(ctx, 'pending', name)
         const StageKeyword = keywords != '🚫 Пропустить' ? await Keywords(ctx, Number(StageId[0].id), keywords) : false
         const StageCallback = domain != '🚫 Пропустить' ? await Callback(ctx, Number(StageId[0].id), domain) : false
-        const StagePixel = pixel != '🚫 Пропустить' || token != '🚫 Пропустить' || target != '🚫 Пропустить' || event != '🚫 Пропустить' ? await Pixel(ctx, Number(StageId[0].id), pixel, token, target, event) : false
+        const StagePixel = target != 'tiktok' || pixel != '🚫 Пропустить' || token != '🚫 Пропустить' || target != '🚫 Пропустить' || event != '🚫 Пропустить' ? await Pixel(ctx, Number(StageId[0].id), pixel, token, target, event) : false
 
         LOG(username, 'Middlewares/Tonic/CreateMiddleware');
         if(mode){
@@ -52,7 +53,8 @@ const StatisticsMiddleware = async (ctx, { date, source, buyer }) => {
     const { username } = ctx.message.from;
     try {
         const response = await Statistics(ctx, date);
-        const filter = FilterStats(response, source, buyer);
+        const sheet_id = await GetSheet(ctx)
+        const filter = FilterStats(response, source, sheet_id);
 
         LOG(username, 'Middlewares/Tonic/StatisticsMiddleware');
         return await StatisticsMessage(ctx, filter);

@@ -245,6 +245,21 @@ const DomainAdd = async (ctx, domain) => {
 }
 //* END - DomainAdd
 
+//* START - GetSheet | Добавляем пользователю sheet_id
+const GetSheet = async (ctx) => {
+    const { username, id } = ctx.message.from
+    try {
+        const index = list.findIndex(user => user.id == id)
+
+        LOG(username, 'Helpers/Users/SheetAdd')
+        return update[index].sheet;
+    } catch (error) {
+        LOG(username, 'Helpers/Users/SheetAdd', error)
+        return false
+    }
+}
+//* END - GetSheet
+
 
 module.exports = { 
     LoadUsers, 
@@ -259,5 +274,6 @@ module.exports = {
     OfferAdd,
     GetUser,
     DomainAdd,
+    GetSheet,
     GrantAdminAccess
 }

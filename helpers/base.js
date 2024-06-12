@@ -5,6 +5,7 @@ const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
 const { Markup } = require('telegraf')
+const { LoadSheet } = require('@helpers/sheet')
 
 
 //* START - Logger
@@ -203,17 +204,23 @@ const UpdateStatsItem = (existingItem, item) => {
 
 
 //* START - FilterStats
-const FilterStats = (data, source, buyer) => {
-    return data.filter(obj => obj.campaign_name.includes(buyer) && obj.network === source)
-        .reduce((acc, item) => {
-            const existingItem = acc.find(group => group.campaign_name === item.campaign_name);
-            if (existingItem) {
-                UpdateStatsItem(existingItem, item);
-            } else {
-                acc.push(CreateStatsItem(item));
-            }
-            return acc;
-        }, []);
+const FilterStats = (data, source, sheet_id) => {
+    const sheetList = LoadSheet(ctx, sheet_id)
+    const compains = sheetList.map(row => {
+        return row._rawData
+    })
+    console.log(compains)
+
+    // return data.filter(obj => sheet.includes(obj.name) && obj.network === source)
+    //     .reduce((acc, item) => {
+    //         const existingItem = acc.find(group => group.campaign_name === item.campaign_name);
+    //         if (existingItem) {
+    //             UpdateStatsItem(existingItem, item);
+    //         } else {
+    //             acc.push(CreateStatsItem(item));
+    //         }
+    //         return acc;
+    //     }, []);
 }
 //* END - FilterStats
 

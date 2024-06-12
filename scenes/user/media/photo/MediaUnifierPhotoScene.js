@@ -11,7 +11,7 @@ stagePhoto.on('text', async (ctx) => {
     try {
         ctx.wizard.state.data = {}
         ctx.wizard.state.data.user = username
-        await ctx.replyWithHTML('1️⃣ <b>Отправьте фото файлом:</b>')
+        await ctx.replyWithHTML('1️⃣ <b>Отправьте фото:</b>')
 
         LOG(username, 'Scenes/User/Media/Photo/stagePhoto')
         return ctx.wizard.next()

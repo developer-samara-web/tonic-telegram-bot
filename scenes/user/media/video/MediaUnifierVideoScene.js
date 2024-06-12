@@ -11,7 +11,7 @@ stageVideo.on('text', async (ctx) => {
     try {
         ctx.wizard.state.data = {}
         ctx.wizard.state.data.user = username
-        await ctx.replyWithHTML('1️⃣ <b>Отправьте видео файлом:</b>')
+        await ctx.replyWithHTML('1️⃣ <b>Отправьте видео:</b>')
 
         LOG(username, 'Scenes/Media/Video/stageVideo')
         return ctx.wizard.next()

@@ -204,7 +204,10 @@ const UpdateStatsItem = (existingItem, item) => {
 
 //* START - FilterStats
 const FilterStats = (data, source, compains) => {
-    return data.filter(obj => compains.includes(obj.name) && obj.network === source)
+
+    const filter = data.filter(item => compains.includes(item.campaign_name));
+
+    return filter.filter(obj => obj.network === source)
         .reduce((acc, item) => {
             const existingItem = acc.find(group => group.campaign_name === item.campaign_name);
             if (existingItem) {

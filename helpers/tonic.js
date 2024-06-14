@@ -182,9 +182,9 @@ const Callback = async (ctx, id, domain) => {
         const requests = [
             { type: "view", url: `https://${domain}/cf/cv?click_id={subid4}&payout=0&ct=view` },
             { type: "click", url: `https://${domain}/cf/cv?click_id={subid4}&payout=0&param1={keyword}&ct=click` },
-            { type: "estimated_revenue", url: `https://${domain}/cf/cv?click_id={subid4}&payout={revenue}&param1={keyword}&ct=preestimated_revenue` },
-            { type: "estimated_revenue_5h", url: `https://${domain}/cf/cv?click_id={subid4}&payout={revenue}&param1={keyword}&ct=estimated_revenue` },
-            { type: "preestimated_revenue", url: `https://${domain}/cf/cv?click_id={subid4}&payout={revenue}&param1={keyword}&ct=estimated_revenue_5h` }
+            { type: "preestimated_revenue", url: `https://${domain}/cf/cv?click_id={subid4}&payout={revenue}&param1={keyword}&ct=preestimated_revenue` },
+            { type: "estimated_revenue", url: `https://${domain}/cf/cv?click_id={subid4}&payout={revenue}&param1={keyword}&ct=estimated_revenue` },
+            { type: "estimated_revenue_5h", url: `https://${domain}/cf/cv?click_id={subid4}&payout={revenue}&param1={keyword}&ct=estimated_revenue_5h` },
         ];
 
         const responses = await Promise.all(requests.map(async (request) => {

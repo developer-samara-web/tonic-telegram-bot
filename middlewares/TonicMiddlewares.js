@@ -16,7 +16,7 @@ const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, p
         const StageId = await SearchMiddleware(ctx, 'pending', name)
         const StageKeyword = keywords != '🚫 Пропустить' ? await Keywords(ctx, Number(StageId[0].id), keywords) : false
         const StageCallback = domain != '🚫 Пропустить' ? await Callback(ctx, Number(StageId[0].id), domain) : false
-        const StagePixel = target != 'tiktok' || pixel != '🚫 Пропустить' || token != '🚫 Пропустить' || target != '🚫 Пропустить' || event != '🚫 Пропустить' ? await Pixel(ctx, Number(StageId[0].id), pixel, token, target, event) : false
+        const StagePixel = target == 'facebook' || pixel != '🚫 Пропустить' || token != '🚫 Пропустить' || target != '🚫 Пропустить' || event != '🚫 Пропустить' ? await Pixel(ctx, Number(StageId[0].id), pixel, token, target, event) : false
 
         LOG(username, 'Middlewares/Tonic/CreateMiddleware');
         if(mode){

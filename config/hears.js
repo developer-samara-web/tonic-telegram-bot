@@ -55,7 +55,7 @@ module.exports = Bot => {
 
     //* ADMIN USERS
     Bot.hears('🔹 Пользователи', ctx => PermissionsAdmin(ctx, 'users'))
-    Bot.hears('🔹 Список пользователей', ctx => PermissionsAdmin(ctx, null, UsersListMiddleware(ctx)))
+    Bot.hears('🔹 Список пользователей', ctx => PermissionsAdmin(ctx, null, UsersListMiddleware))
     Bot.hears('🔹 Добавить', ctx => PermissionsAdmin(ctx, 'UsersAddWizard'))
     Bot.hears('🔹 Удалить', ctx => PermissionsAdmin(ctx, 'UsersRemoveWizard'))
 }

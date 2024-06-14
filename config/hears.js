@@ -50,7 +50,7 @@ module.exports = Bot => {
     //* ADMIN
     Bot.hears('⚙️ Панель управления', ctx => PermissionsAdmin(ctx, 'admin'))
     Bot.hears('🔹 Отправить сообщение', ctx => PermissionsAdmin(ctx, 'AdminMessageWizard'))
-    Bot.hears('🔹 Запросить логи', ctx => PermissionsAdmin(ctx, null, AdminLogsMiddleware(ctx)))
+    Bot.hears('🔹 Запросить логи', ctx => PermissionsAdmin(ctx, null, AdminLogsMiddleware))
     Bot.hears('🔹 Мониторинг', ctx => PermissionsAdmin(ctx, 'monitoring'))
 
     //* ADMIN USERS

@@ -4,7 +4,8 @@
 const fs = require('fs');
 const { LOG } = require('@helpers/base')
 const { Status } = require('@helpers/tonic')
-const { SaveSheet } = require('@helpers/sheet')
+const { SaveSheet, SearchSheet } = require('@helpers/sheet')
+const { GetSheet } = require('@helpers/users')
 const { Bot } = require('@config/telegram')
 
 
@@ -22,7 +23,10 @@ const MonitoringMiddleware = async (ctx) => {
     }
     
     const CheckLink = async (ctx, link, list) => {
-        const item = await Status(ctx, link.name);
+        const sheet_id = await GetSheet(ctx)
+        const sheet_str = await SearchSheet(ctx, sheet_id, link.name)
+        const account = sheet_str._rawData[1]
+        const item = await Status(ctx, link.name, account);
         
         if (item.status === 'active') {
             await SaveSheet(ctx, link.sheet_id, link.name, { type: 'href', data: `https://${item['0'].link}` });

@@ -30,7 +30,7 @@ module.exports = Bot => {
     //* TONIC EDITS
     Bot.hears('🔹 Добавить пиксель', ctx => Permissions(ctx, 'TonicPixelWizard'))
     Bot.hears('🔹 Добавть ключи', ctx => Permissions(ctx, 'TonicSetKeywordsWizard'))
-    Bot.hears("🔹 Добавть Postback'и", ctx => Permissions(ctx, 'TonicСallbackWizard'))
+    Bot.hears('🔹 Добавть постбеки', ctx => Permissions(ctx, 'TonicСallbackWizard'))
 
     //* TONIC STATS
     Bot.hears('🔹 Общая статистика', ctx => Permissions(ctx, 'TonicStatisticsWizard'))

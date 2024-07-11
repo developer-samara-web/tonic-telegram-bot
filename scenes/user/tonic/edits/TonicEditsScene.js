@@ -15,6 +15,7 @@ TonicEditsScene.enter(async (ctx) => {
 
         await ctx.replyWithHTML('<b>❇️  TONIC EDITS PANEL |</b> Выберите действие:', Markup.keyboard([
             ['🔹 Добавить пиксель', '🔹 Добавть ключи'],
+            ['🔹 Добавть постбеки'],
             ['🔻 Назад'],
         ]).resize().oneTime());
 

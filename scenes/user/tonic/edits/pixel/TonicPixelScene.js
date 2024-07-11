@@ -25,29 +25,6 @@ stageName.on('text', async (ctx) => {
 //* END - StageName
 
 
-//* START - StageTarget
-const stageTarget = new Composer()
-stageTarget.on('text', async (ctx) => {
-    const { data } = ctx.wizard.state
-    const { username } = ctx.message.from
-
-    try {
-        data.name = ctx.message.text
-        await ctx.replyWithHTML('2️⃣ <b>Укажите тип пикселя:</b>',
-            Markup.keyboard([
-                ['facebook', 'tiktok'],
-            ]).resize().oneTime())
-
-        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageTarget')
-        return ctx.wizard.next()
-    } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageTarget')
-        return ctx.scene.leave()
-    }
-})
-//* END - StageTarget
-
-
 //* START - StageEvent
 const stageEvent = new Composer()
 stageEvent.on('text', async (ctx) => {
@@ -55,7 +32,7 @@ stageEvent.on('text', async (ctx) => {
     const { username } = ctx.message.from
 
     try {
-        data.target = ctx.message.text
+        data.name = ctx.message.text
 
         await ctx.replyWithHTML('3️⃣ <b>Укажите event пикселя:</b> (Только для Facebook)',
             Markup.keyboard([
@@ -142,5 +119,5 @@ stageResult.on('message', async (ctx) => {
 //* END - StageResult
 
 
-const TonicPixelScene = new Scenes.WizardScene('TonicPixelWizard', stageName, stageTarget, stageEvent, stagePixel, stageToken, stageResult)
+const TonicPixelScene = new Scenes.WizardScene('TonicPixelWizard', stageName, stageEvent, stagePixel, stageToken, stageResult)
 module.exports = TonicPixelScene

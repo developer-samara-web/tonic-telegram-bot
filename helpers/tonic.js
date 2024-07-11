@@ -68,7 +68,6 @@ const Request = async (ctx, method, url, token, body, account) => {
     const { username } = ctx.message.from
     try {
         const Reg = await Auth(account)
-
         let headers = await Reg.toHeader(Reg.authorize({
             url: url,
             method: method,
@@ -134,8 +133,8 @@ const Statistics = async (ctx, date) => {
 
         const url = `${process.env.TONIC_API_URL}/reports/tracking?${initDate}&columns=date,campaign_name,clicks,revenueUsd,keyword,network&output=json`;
 
-        const responseFB =  await Request(ctx, 'GET', url, tokenFacebook)
-        const responseTT =  await Request(ctx, 'GET', url, tokenTiktok)
+        const responseFB =  await Request(ctx, 'GET', url, tokenFacebook, null, 'facebook')
+        const responseTT =  await Request(ctx, 'GET', url, tokenTiktok, null, 'tiktok')
 
         LOG(username, 'Helpers/Tonic/Statistics')
         return [...responseFB, ...responseTT];

@@ -175,7 +175,7 @@ const GetKeywords = async (ctx, id, account) => {
         const url = `${process.env.TONIC_API_URL}/campaign/keywords?campaign_id=${id}`;
 
         LOG(username, 'Helpers/Tonic/GetKeywords')
-        return Request(ctx, 'GET', url, token);
+        return Request(ctx, 'GET', url, token, null, account);
     } catch (error) {
         LOG(username, 'Helpers/Tonic/GetKeywords', error)
     }
@@ -218,7 +218,7 @@ const GetCallback = async (ctx, id, account) => {
         const url = `${process.env.TONIC_API_URL}/campaign/callback?campaign_id=${id}`;
 
         LOG(username, 'Helpers/Tonic/GetCallback')
-        return await Request(ctx, 'GET', url, token);
+        return await Request(ctx, 'GET', url, token, null, account);
     } catch (error) {
         LOG(username, 'Helpers/Tonic/GetCallback', error)
     }

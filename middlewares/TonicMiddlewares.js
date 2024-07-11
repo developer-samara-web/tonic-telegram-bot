@@ -38,6 +38,7 @@ const StatusMiddleware = async (ctx, name) => {
         const sheet_id = await GetSheet(ctx)
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
         const account = sheet_str._rawData[1]
+
         const response = await Status(ctx, name, account)
         const item = await SearchMiddleware(ctx, response.status, name, account)
         const callback = await GetCallback(ctx, item[0].id, account)

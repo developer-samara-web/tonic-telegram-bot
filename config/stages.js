@@ -23,6 +23,10 @@ module.exports = [
     require('@scenes/user/media/photo/MediaUnifierPhotoScene'),
     require('@scenes/user/media/video/MediaUnifierVideoScene'),
 
+    //* GENERATORS
+    require('@scenes/user/generators/GeneratorsScene'),
+    require('@scenes/user/generators/cards/CardsScene'),
+
     //* USER
     require('@scenes/user/settings/SettingsScene'),
     require('@scenes/user/settings/sheet/SheetAddScene'),

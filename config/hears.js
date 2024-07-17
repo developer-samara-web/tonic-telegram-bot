@@ -14,6 +14,10 @@ module.exports = Bot => {
     Bot.hears('🔸 Получить доступ', ctx => PermissionsAccess(ctx))
     Bot.hears('🔹 Повысить уровень', ctx => PermissionsAdminAccess(ctx))
 
+    //* GENERATORS
+    Bot.hears('🔹 Генераторы', ctx => Permissions(ctx, 'generators'))
+    Bot.hears('🔹 Создать карту', ctx => Permissions(ctx, 'CardsWizard'))
+
     //* MEDIA
     Bot.hears('🔹 Уникализатор', ctx => Permissions(ctx, 'media'))
     Bot.hears('🔹 Фото', ctx => Permissions(ctx, 'MediaUnifierPhotoWizard'))

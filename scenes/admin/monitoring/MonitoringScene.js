@@ -2,29 +2,28 @@
 
 //* Requires
 const { LOG } = require('@helpers/base')
-const { HasAdminAccess } = require('@helpers/users')
+const { HasAdminAccess } = require('@helpers/firebase')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
 
-//* START - MonitoringScene
+//* START
 const MonitoringScene = new BaseScene('monitoring');
 MonitoringScene.enter(async (ctx) => {
     const { username, id } = ctx.message.from
-    const { status } = require('@data/monitoring')
     const admin = await HasAdminAccess(ctx, id)
     
     try {
-        await ctx.replyWithHTML(`<b>❇️  MONITORING PANEL |</b> :  ${status ? '✅ Активно' : '🚫 Выключено'}`, Markup.keyboard([
-            [ admin ? '🔹 Включить' : '🔺 Повысить права', admin ? '🔻 Выключить' : '🔺 Повысить права'],
-            ['🔺 На главную'],
+        await ctx.replyWithHTML(`<b>❇️  MONITORING PANEL |</b> Выберите действие:`, Markup.keyboard([
+            admin ? ['🔹 Компании в работе', '🔹 Обновить'] : ['🔺 Повысить права'],
+            ['⬅️ В меню управления'],
         ]).resize().oneTime());
         
         LOG(username, 'Scenes/Admin/Monitoring/MonitoringScene')
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Monitoring/MonitoringScene', error)
+        LOG(username, 'Scenes/Admin/Monitoring/MonitoringScene', error, ctx)
     }
 })
-//* END - MonitoringScene
+//* END
 
 
 module.exports = MonitoringScene

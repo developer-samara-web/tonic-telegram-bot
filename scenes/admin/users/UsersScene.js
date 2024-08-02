@@ -2,11 +2,11 @@
 
 //* Requires
 const { LOG } = require('@helpers/base')
-const { HasAdminAccess } = require('@helpers/users')
+const { HasAdminAccess } = require('@helpers/firebase')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
 
-//* START - TonicScene
+//* START
 const UsersScene = new BaseScene('users');
 UsersScene.enter(async (ctx) => {
     const { username, id } = ctx.message.from
@@ -16,15 +16,15 @@ UsersScene.enter(async (ctx) => {
         await ctx.replyWithHTML('<b>❇️  USERS PANEL |</b> Выберите действие:', Markup.keyboard([
             [ admin ? '🔹 Добавить' : '🔺 Повысить права', admin ? '🔹 Удалить' : '🔺 Повысить права'],
             [ admin ? '🔹 Список пользователей' : '🔺 Повысить права'],
-            ['🔺 На главную'],
+            ['⬅️ В меню управления'],
         ]).resize().oneTime());
 
         LOG(username, 'Scenes/Admin/Users/UsersScene')
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Users/UsersScene', error)
+        LOG(username, 'Scenes/Admin/Users/UsersScene', error, ctx)
     }
 });
-//* END- TonicScene
+//* END
 
 
 module.exports = UsersScene

@@ -1,20 +1,26 @@
-//? MIDDLEWARES | ADMIN
+//? MESSAGES | ADMIN
 
 //* Requires
 const { LOG } = require('@helpers/base')
 
 
-//* START - AdminMessage | Отправка сообщения всем пользователям
+//* START
 const AdminMessage = async (ctx, message) => {
-    const { username } = ctx.message.from
+    // Получаем имя пользователя из контекста или устанавливаем 'BOT' по умолчанию
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+
     try {
+        // Логируем информацию о вызове функции
         LOG(username, 'Messages/Admin/AdminMessage')
+        
+        // Формируем и возвращаем сообщение для администратора
         return `⚠️ <b>Сообщение от бота:</b>\n\n${message}`
     } catch (error) {
-        LOG(username, 'Messages/Admin/AdminMessage', error)
+        // Логируем ошибку, если она произошла
+        LOG(username, 'Messages/Admin/AdminMessage', error, ctx)
     }
 }
-//* END - AdminMessage
+//* END
 
 
 module.exports = { AdminMessage }

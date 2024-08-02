@@ -17,7 +17,7 @@ stageName.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageName')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageName', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageName', error, ctx)
         return ctx.scene.leave()
     }
 })
@@ -40,7 +40,7 @@ stageDomain.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageDomain')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageDomain', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageDomain', error, ctx)
         return ctx.scene.leave()
     }
 })
@@ -68,7 +68,7 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageResult', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Сallbacks/TonicСallbackScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('tonic-edits')

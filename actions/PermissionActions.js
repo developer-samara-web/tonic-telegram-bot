@@ -3,61 +3,89 @@
 //* Requires
 const { LOG } = require('@helpers/base')
 const { Markup } = require('telegraf')
-const { GrantAccess, GrantAdminAccess } = require('@helpers/users')
+const { GrantAccess, GrantAdminAccess } = require('@helpers/firebase')
 
 
-//* START - PermissionsAction | Подтверждение на выдачу прав доступа
+//* START
 const PermissionsAction = async (ctx) => {
-    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
+    // Извлекаем username из контекста сообщения или callbackQuery, если не найден, устанавливаем значение 'BOT'
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+    
     try {
-        const { action, id, user } = JSON.parse(ctx.callbackQuery.data);
+        // Извлекаем action, id и user из данных callbackQuery
+        const { action, id, user } = JSON.parse(ctx.callbackQuery.data)
+        // Извлекаем message_id из callbackQuery
         const { message_id } = ctx.callbackQuery.message
 
         if (action === 'grant_access') {
-            GrantAccess(ctx, id, user);
-            await ctx.deleteMessage(message_id);
+            // Если действие - предоставление доступа
+            GrantAccess(ctx, id, user)
+            // Удаляем сообщение
+            await ctx.deleteMessage(message_id)
+            // Отправляем пользователю сообщение об одобрении доступа с клавиатурой
             await ctx.telegram.sendMessage(id, '✅ Ваш запрос на доступ был одобрен.', Markup.keyboard([
                 ['🔹 Начать работу'],
-            ]).resize().oneTime());
+            ]).resize().oneTime())
 
-            LOG(username, 'Permissions/PermissionsAction');
+            // Логируем действие
+            LOG(username, 'Actions/PermissionsAction')
         } else if (action === 'deny_access') {
-            await ctx.deleteMessage(message_id);
-            await ctx.telegram.sendMessage(id, '🚫 Вам отказано в доступе.');
-            LOG(username, 'Permissions/PermissionsAction', 'Отказ в доступе.');
+            // Если действие - отказ в доступе
+            // Удаляем сообщение
+            await ctx.deleteMessage(message_id)
+            // Отправляем пользователю сообщение об отказе в доступе
+            await ctx.telegram.sendMessage(id, '🚫 Вам отказано в доступе.')
+            
+            // Логируем действие с отказом в доступе
+            LOG(username, 'Actions/PermissionsAction', 'Отказ в доступе.')
         }
     } catch (error) {
-        LOG(username, 'Helpers/Permissions/PermissionsAction', error);
+        // Логируем ошибку, если она возникла
+        LOG(username, 'Actions/PermissionsAction', error, ctx)
     }
 }
-//* END - PermissionsAction
+//* END
 
 
-//* START - PermissionsAdminAction | Подтверждение на выдачу прав доступа администратора
+//* START
 const PermissionsAdminAction = async (ctx) => {
-    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT';
+    // Извлекаем username из контекста сообщения или callbackQuery, если не найден, устанавливаем значение 'BOT'
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+
     try {
-        const { action, id, user } = JSON.parse(ctx.callbackQuery.data);
+        // Извлекаем action, id и user из данных callbackQuery
+        const { action, id, user } = JSON.parse(ctx.callbackQuery.data)
+        // Извлекаем message_id из callbackQuery
         const { message_id } = ctx.callbackQuery.message
 
         if (action === 'grant_admin_access') {
-            GrantAdminAccess(ctx, id, user);
-            await ctx.deleteMessage(message_id);
+            // Если действие - предоставление доступа админа
+            GrantAdminAccess(ctx, id, user)
+            // Удаляем сообщение
+            await ctx.deleteMessage(message_id)
+            // Отправляем пользователю сообщение об одобрении доступа админа с клавиатурой
             await ctx.telegram.sendMessage(id, '✅ Ваш запрос на доступ админа был одобрен.', Markup.keyboard([
                 ['🔹 Продолжить'],
-            ]).resize().oneTime());
+            ]).resize().oneTime())
 
-            LOG(username, 'Permissions/PermissionsAdminAction');
+            // Логируем действие
+            LOG(username, 'Action/PermissionsAdminAction')
         } else if (action === 'deny_admin_access') {
-            await ctx.deleteMessage(message_id);
-            await ctx.telegram.sendMessage(id, '🚫 Вам отказано в доступе админа.');
-            LOG(username, 'Permissions/PermissionsAdminAction', 'Отказ в доступе.');
+            // Если действие - отказ в доступе админа
+            // Удаляем сообщение
+            await ctx.deleteMessage(message_id)
+            // Отправляем пользователю сообщение об отказе в доступе админа
+            await ctx.telegram.sendMessage(id, '🚫 Вам отказано в доступе админа.')
+
+            // Логируем действие с отказом в доступе админа
+            LOG(username, 'Action/PermissionsAdminAction', 'Отказ в доступе.')
         }
     } catch (error) {
-        LOG(username, 'Helpers/Permissions/PermissionsAdminAction', error);
+        // Логируем ошибку, если она возникла
+        LOG(username, 'Action/PermissionsAdminAction', error, ctx)
     }
 }
-//* END - PermissionsAdminAction
+//* END
 
 
 module.exports = { PermissionsAction, PermissionsAdminAction }

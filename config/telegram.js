@@ -1,10 +1,10 @@
 //? CONFIG | TELEGRAM
 
 
-//* START - TelegramInit
+//* START
 const { Telegraf } = require('telegraf')
 const Bot = new Telegraf(process.env.TELEGRAM_TOKEN)
-//* END- TelegramInit
+//* END
 
 
 module.exports = { Bot }

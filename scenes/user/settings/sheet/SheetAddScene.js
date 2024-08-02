@@ -6,7 +6,7 @@ const { Scenes, Composer } = require('telegraf')
 const { UsersSheetAddMiddleware } = require('@middlewares/UsersMiddlewares')
 
 
-//* START - StageSheetId
+//* START
 const stageSheetId = new Composer()
 stageSheetId.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageSheetId.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Settings/Sheet/SheetAddScene/StageSheetId')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Settings/Sheet/SheetAddScene/StageSheetId', error)
+        LOG(username, 'Scenes/User/Settings/Sheet/SheetAddScene/StageSheetId', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageSheetId
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
@@ -42,13 +42,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Settings/Sheet/SheetAddScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Settings/Sheet/SheetAddScene/StageResult', error)
+        LOG(username, 'Scenes/User/Settings/Sheet/SheetAddScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('settings')
     }
 })
-//* END - StageResult
+//* END
 
 
 const SheetAddScene = new Scenes.WizardScene('SheetAddWizard', stageSheetId, stageResult)

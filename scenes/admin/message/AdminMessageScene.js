@@ -6,7 +6,7 @@ const { Scenes, Composer } = require('telegraf')
 const { AdminMessageMiddleware } = require('@middlewares/AdminMiddlewares')
 
 
-//* START - StageMessage
+//* START
 const stageMessage = new Composer()
 stageMessage.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageMessage.on('text', async (ctx) => {
         LOG(username, 'Scenes/Admin/Message/AdminMessageScene/stageMessage')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Message/AdminMessageScene/stageMessage', error)
+        LOG(username, 'Scenes/Admin/Message/AdminMessageScene/stageMessage', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageMessage
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
@@ -42,13 +42,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/Admin/Message/AdminMessageScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Message/AdminMessageScene/StageResult', error)
+        LOG(username, 'Scenes/Admin/Message/AdminMessageScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('admin')
     }
 })
-//* END - StageResult
+//* END
 
 
 const AdminMessageScene = new Scenes.WizardScene('AdminMessageWizard', stageMessage, stageResult)

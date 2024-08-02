@@ -1,58 +1,74 @@
-//? MIDDLEWARES | USERS
+//? MESSAGES | USERS
 
 //* Requires
 const { LOG } = require('@helpers/base')
 
 
-//* START - UsersAddMessage
+//* START
 const UsersAddMessage = async (ctx, status, id, name) => {
-    const { username } = ctx.message.from
+    // Получаем имя пользователя из контекста
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+    
     try {
+        // Логируем выполнение функции
         LOG(username, 'Messages/Users/UsersAddMessage')
 
+        // Возвращаем сообщение об успешном добавлении или неудаче
         return status ?
-            `✅ <b>[ @${name} | ID:${id} ]</b> успешно добавлен.`:
+            `✅ <b>[ @${name} | ID:${id} ]</b> успешно добавлен.` :
             `🚫 <b>[ @${name} | ID:${id} ]</b> не был добавлен.`
     } catch (error) {
-        LOG(username, 'Messages/Users/UsersAddMessage', error)
+        // Логируем ошибку
+        LOG(username, 'Messages/Users/UsersAddMessage', error, ctx)
     }
 }
-//* END - UsersAddMessage
+//* END
 
 
-//* START - UsersRemoveMessage
+//* START
 const UsersRemoveMessage = async (ctx, status, id) => {
-    const { username } = ctx.message.from
+    // Получаем имя пользователя из контекста
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+    
     try {
+        // Логируем выполнение функции
         LOG(username, 'Messages/Users/UsersRemoveMessage')
 
+        // Возвращаем сообщение об успешном удалении или неудаче
         return status ?
-            `✅ <b>[ ID:${id} ]</b> успешно удалён.`:
+            `✅ <b>[ ID:${id} ]</b> успешно удалён.` :
             `🚫 <b>[ ID:${id} ]</b> не был удалён.`
     } catch (error) {
-        LOG(username, 'Messages/Users/UsersRemoveMessage', error)
+        // Логируем ошибку
+        LOG(username, 'Messages/Users/UsersRemoveMessage', error, ctx)
     }
 }
-//* END - UsersRemoveMessage
+//* END
 
 
-//* START - UsersListMessage
+//* START
 const UsersListMessage = async (ctx, users) => {
-    const { username } = ctx.message.from
+    // Получаем имя пользователя из контекста
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+    
     try {
-        let message = "🚹 <b>Список пользователей:</b>\n\n----------------------------------\n";
+        // Инициализируем сообщение с заголовком
+        let message = "🚹 <b>Список пользователей:</b>\n----------------------------------\n"
 
+        // Перебираем список пользователей и добавляем информацию о каждом
         for (const user of users) {
-            message += `💠 <b>ID:</b> ${user.id} | <b>Ник:</b> ${user.name}\n----------------------------------\n`;
+            message += `🔹 <b>ID:</b> ${user.id}\n🔸 <b>Ник:</b> ${user.name}\n----------------------------------\n`
         }
 
-        LOG(username , 'Messages/Users/UsersListMessage')
+        // Логируем выполнение функции
+        LOG(username, 'Messages/Users/UsersListMessage')
         return message
     } catch (error) {
-        LOG(username , 'Messages/Users/UsersListMessage', error)
+        // Логируем ошибку
+        LOG(username, 'Messages/Users/UsersListMessage', error, ctx)
     }
 }
-//* END - UsersListMessage
+//* END
 
 
 module.exports = { 

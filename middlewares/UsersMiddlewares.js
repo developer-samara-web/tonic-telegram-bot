@@ -3,95 +3,102 @@
 //* Require
 const { LOG } = require('@helpers/base')
 const { UsersAddMessage, UsersRemoveMessage, UsersListMessage } = require('@messages/UsersMessages')
-const { AddUser, RemoveUser, LoadUsers, SheetAdd, OfferAdd, DomainAdd } = require('@helpers/users')
+const { SetFirebaseUser, DeleteFirebaseUser, GetFirebaseUsers, UpdateUserSheet, UpdateUserDomain } = require('@helpers/firebase')
 
 
-//* START - UsersAddMiddleware / Добавление пользователей
+//* START
 const UsersAddMiddleware = async (ctx) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     const { id, name } = ctx.wizard.state.data
     try {
-        const response = AddUser(ctx, id, name);
+        // Устанавливаем пользователя в Firebase
+        const response = SetFirebaseUser(ctx, { id, name });
 
+        // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Users/UsersAddMiddleware')
+        // Возвращаем сообщение о добавлении пользователя
         return await UsersAddMessage(ctx, response, id, name)
     } catch (error) {
-        LOG(username, 'Middlewares/Users/UsersAddMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Users/UsersAddMiddleware', error, ctx)
     }
 }
-//* END - UsersAddMiddleware
+//* END
 
 
-//* START - UsersRemoveMiddleware / Удаление пользователей
+//* START
 const UsersRemoveMiddleware = async (ctx, id) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
-        const response = RemoveUser(ctx, id);
+        // Удаляем пользователя из Firebase
+        const response = DeleteFirebaseUser(ctx, id);
 
+        // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Users/UsersRemoveMiddleware')
+        // Возвращаем сообщение о удалении пользователя
         return await UsersRemoveMessage(ctx, response, id)
     } catch (error) {
-        LOG(username, 'Middlewares/Users/UsersRemoveMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Users/UsersRemoveMiddleware', error, ctx)
     }
 }
-//* END - UsersRemoveMiddleware
+//* END
 
 
-//* START - UsersListMiddleware / Получение списка пользователей
+//* START
 const UsersListMiddleware = async (ctx) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
-        const list = await LoadUsers(ctx);
+        // Получаем список пользователей из Firebase
+        const list = await GetFirebaseUsers(ctx);
+        // Формируем сообщение со списком пользователей
         const message = await UsersListMessage(ctx, list)
 
+        // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Users/UsersListMiddleware')
+        // Отправляем сообщение с пользователями в чат
         return await ctx.replyWithHTML(message)
     } catch (error) {
-        LOG(username, 'Middlewares/Users/UsersListMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Users/UsersListMiddleware', error, ctx)
     } finally {
+        // Переходим к сцене управления пользователями
         return ctx.scene.enter('users')
     }
 }
-//* END - UsersListMiddleware
+//* END
 
 
-//* START - UsersSheetAddMiddleware / Добавление sheet_id пользователя
+//* START
 const UsersSheetAddMiddleware = async (ctx, sheet_id) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
+        // Логируем начало выполнения функции
         LOG(username, 'Middlewares/Users/UsersSheetAddMiddleware')
-        return await SheetAdd(ctx, sheet_id)
+        // Обновляем лист пользователя в Firebase
+        return await UpdateUserSheet(ctx, sheet_id)
     } catch (error) {
-        LOG(username, 'Middlewares/Users/UsersSheetAddMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Users/UsersSheetAddMiddleware', error, ctx)
     }
 }
-//* END - UsersSheetAddMiddleware
+//* END
 
 
-//* START - UsersOfferAddMiddleware / Добавление оффера Tonic
-const UsersOfferAddMiddleware = async (ctx, offer) => {
-    const { username } = ctx.message.from
-    try {
-        LOG(username, 'Middlewares/Users/UsersOfferAddMiddleware')
-        return await OfferAdd(ctx, offer)
-    } catch (error) {
-        LOG(username, 'Middlewares/Users/UsersOfferAddMiddleware', error)
-    }
-}
-//* END - UsersOfferAddMiddleware
-
-
-//* START - UsersDomainAddMiddleware / Добавление оффера Tonic
+//* START
 const UsersDomainAddMiddleware = async (ctx, domain) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
+        // Логируем начало выполнения функции
         LOG(username, 'Middlewares/Users/UsersDomainAddMiddleware')
-        return await DomainAdd(ctx, domain)
+        // Обновляем домен пользователя в Firebase
+        return await UpdateUserDomain(ctx, domain)
     } catch (error) {
-        LOG(username, 'Middlewares/Users/UsersDomainAddMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Users/UsersDomainAddMiddleware', error, ctx)
     }
 }
-//* END - UsersDomainAddMiddleware
+//* END
 
 
 module.exports = {
@@ -99,6 +106,5 @@ module.exports = {
     UsersRemoveMiddleware,
     UsersListMiddleware,
     UsersSheetAddMiddleware,
-    UsersOfferAddMiddleware,
     UsersDomainAddMiddleware
 }

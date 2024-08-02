@@ -6,7 +6,7 @@ const { Scenes, Composer } = require('telegraf')
 const { UsersDomainAddMiddleware } = require('@middlewares/UsersMiddlewares')
 
 
-//* START - StageSheetId
+//* START
 const stageDomainName = new Composer()
 stageDomainName.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageDomainName.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Settings/domain/DomainAddScene/stageDomainName')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Settings/domain/DomainAddScene/stageDomainName', error)
+        LOG(username, 'Scenes/User/Settings/domain/DomainAddScene/stageDomainName', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageSheetId
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
@@ -42,13 +42,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Settings/domain/DomainAddScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Settings/domain/DomainAddScene/StageResult', error)
+        LOG(username, 'Scenes/User/Settings/domain/DomainAddScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('settings')
     }
 })
-//* END - StageResult
+//* END
 
 
 const DomainAddScene = new Scenes.WizardScene('DomainAddWizard', stageDomainName, stageResult)

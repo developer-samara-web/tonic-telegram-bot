@@ -6,7 +6,7 @@ const { Scenes, Composer } = require('telegraf')
 const { UsersAddMiddleware } = require('@middlewares/UsersMiddlewares')
 
 
-//* START - StageId
+//* START
 const stageId = new Composer()
 stageId.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageId.on('text', async (ctx) => {
         LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageId')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageId', error)
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageId', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageId
+//* END
 
 
-//* START - StageUsername
+//* START
 const stageUsername = new Composer()
 stageUsername.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -37,14 +37,14 @@ stageUsername.on('text', async (ctx) => {
         LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageUsername')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageUsername', error)
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageUsername', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageUsername
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
@@ -64,13 +64,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageResult', error)
+        LOG(username, 'Scenes/Admin/Users/Add/UsersAddScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('users')
     }
 })
-//* END - StageResult
+//* END 
 
 
 const UsersAddScene = new Scenes.WizardScene('UsersAddWizard', stageId, stageUsername, stageResult)

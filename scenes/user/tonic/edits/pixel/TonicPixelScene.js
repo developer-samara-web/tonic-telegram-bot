@@ -6,7 +6,7 @@ const { Scenes, Composer, Markup } = require('telegraf')
 const { SetPixelMiddleware } = require('@middlewares/TonicMiddlewares')
 
 
-//* START - StageName
+//* START
 const stageName = new Composer()
 stageName.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageName.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageName')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageName', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageName', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageName
+//* END
 
 
-//* START - StageEvent
+//* START
 const stageEvent = new Composer()
 stageEvent.on('text', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -43,14 +43,14 @@ stageEvent.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageEvent')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageEvent', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageEvent', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageEvent
+//* END
 
 
-//* START - StagePixel
+//* START
 const stagePixel = new Composer()
 stagePixel.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -63,14 +63,14 @@ stagePixel.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StagePixel')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StagePixel', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StagePixel', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StagePixel
+//* END
 
 
-//* START - StageToken
+//* START
 const stageToken = new Composer()
 stageToken.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -83,14 +83,14 @@ stageToken.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageToken')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageToken', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageToken', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageToken
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -110,13 +110,13 @@ stageResult.on('message', async (ctx) => {
 
         LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageResult')
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageResult', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Pixel/TonicPixelScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('tonic-edits')
     }
 })
-//* END - StageResult
+//* END
 
 
 const TonicPixelScene = new Scenes.WizardScene('TonicPixelWizard', stageName, stageEvent, stagePixel, stageToken, stageResult)

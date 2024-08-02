@@ -6,7 +6,7 @@ const { Scenes, Composer, Markup } = require('telegraf')
 const { CompanyMiddleware } = require('@middlewares/TonicMiddlewares')
 
 
-//* START - StageName
+//* START
 const stageName = new Composer()
 stageName.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageName.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageName')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageName', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageName', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageName
+//* END
 
 
-//* START - StageData
+//* START
 const stageData = new Composer()
 stageData.on('text', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -42,14 +42,14 @@ stageData.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageData')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageData', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageData', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageData
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -62,7 +62,9 @@ stageResult.on('message', async (ctx) => {
         await ctx.deleteMessage(message_id);
 
         if (message) {
-            await ctx.replyWithHTML(message)
+            for (const item of message){
+                await ctx.replyWithHTML(item)
+            }
         } else {
             await ctx.replyWithHTML(`🚫 <b>Статистика не найдена.</b>`)
         }
@@ -70,13 +72,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageResult', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/Company/TonicCompanyScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('tonic-stats')
     }
 })
-//* END - StageResult
+//* END
 
 
 const TonicCompanyScene = new Scenes.WizardScene('TonicCompanyWizard', stageName, stageData, stageResult)

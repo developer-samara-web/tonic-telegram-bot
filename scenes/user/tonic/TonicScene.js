@@ -2,22 +2,19 @@
 
 //* Requires
 const { LOG } = require('@helpers/base')
-const { HasAdminAccess } = require('@helpers/users')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
 
 //* START - TonicScene
 const TonicScene = new BaseScene('tonic');
 TonicScene.enter(async (ctx) => {
-    const { username, id } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
-        const admin = await HasAdminAccess(ctx, id)
 
         await ctx.replyWithHTML('<b>❇️  TONIC PANEL |</b> Выберите действие:', Markup.keyboard([
-            admin ? ['🔹 Создать', '🔹 Редактировать'] : ['🔹 Запросить ссылки'],
-            admin ? ['🔹 Проверить статус'] : ['🔹 Проверить статус', '🔹 Редактировать'],
-            ['🔹 Статистика'],
-            ['🔺 На главную'],
+            ['⬆️ Отправить в очередь'],
+            ['🔹 Управление', '🔹 Статистика'],
+            ['⬅️ На главную'],
         ]).resize().oneTime());
 
         LOG(username, 'Scenes/User/Tonic/TonicScene')

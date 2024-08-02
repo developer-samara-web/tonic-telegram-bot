@@ -6,7 +6,7 @@ const { Scenes, Composer } = require('telegraf')
 const { Card } = require('@middlewares/GenerateMiddlewares')
 
 
-//* START - StageCard
+//* START
 const stageCard = new Composer()
 stageCard.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageCard.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Generators/Cards/stageCard')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Generators/Cards/stageCard', error)
+        LOG(username, 'Scenes/User/Generators/Cards/stageCard', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StartScene
+//* END
 
 
-//* START - StageBank
+//* START
 const stageBank = new Composer()
 stageBank.on('text', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -38,14 +38,14 @@ stageBank.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Generators/Cards/stageBank')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Generators/Cards/stageBank', error)
+        LOG(username, 'Scenes/User/Generators/Cards/stageBank', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageBank
+//* END
 
 
-//* START - StageDate
+//* START
 const stageDate = new Composer()
 stageDate.on('text', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -58,14 +58,14 @@ stageDate.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Generators/Cards/stageDate')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Generators/Cards/stageDate', error)
+        LOG(username, 'Scenes/User/Generators/Cards/stageDate', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageDate
+//* END
 
 
-//* START - StageName
+//* START
 const stageName = new Composer()
 stageName.on('text', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -78,14 +78,14 @@ stageName.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Generators/Cards/stageBank')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Generators/Cards/stageBank', error)
+        LOG(username, 'Scenes/User/Generators/Cards/stageBank', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageName
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -105,13 +105,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Generators/Cards/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Generators/Cards/StageResult', error)
+        LOG(username, 'Scenes/User/Generators/Cards/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('generators')
     }
 })
-//* END - StageResult
+//* END
 
 
 const CardsScene = new Scenes.WizardScene('CardsWizard', stageCard, stageBank, stageDate, stageName, stageResult)

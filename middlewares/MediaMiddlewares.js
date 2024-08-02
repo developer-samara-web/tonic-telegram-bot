@@ -7,78 +7,92 @@ const ffmpeg = require('fluent-ffmpeg');
 const { LOG } = require('@helpers/base')
 
 
-//* START - PhotoMiddleware
+//* START
 const PhotoMiddleware = async (ctx) => {
-  const { username } = ctx.message.from
+  // Получаем имя пользователя из контекста
+  const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
 
   try {
-    const fileId = ctx.message.photo[ctx.message.photo.length - 1].file_id;
-    const file = await ctx.telegram.getFile(fileId);
-    const inputPath = file.file_path;
-    const outputPath = path.join(process.cwd(), 'cache', `${path.basename(inputPath, path.extname(inputPath))}_${Math.random().toString(36).substring(7)}.jpg`);
+    // Получаем ID самого большого изображения из массива photo
+    const fileId = ctx.message.photo[ctx.message.photo.length - 1].file_id
+    const file = await ctx.telegram.getFile(fileId) // Получаем информацию о файле
+    const inputPath = file.file_path // Путь к файлу в Telegram
+    const outputPath = path.join(process.cwd(), 'cache', `${path.basename(inputPath, path.extname(inputPath))}_${Math.random().toString(36).substring(7)}.jpg`) // Путь для сохранения обработанного изображения
 
-    const fileUrl = `https://api.telegram.org/file/bot${ctx.telegram.token}/${inputPath}`;
+    // URL для доступа к файлу
+    const fileUrl = `https://api.telegram.org/file/bot${ctx.telegram.token}/${inputPath}`
 
+    // Обработка изображения с помощью ffmpeg
     await new Promise((resolve, reject) => {
       ffmpeg(fileUrl)
-        .output(outputPath)
+        .output(outputPath) // Указываем выходной путь
         .outputOptions([
-          '-vf', `noise=alls=${Math.floor(Math.random() * 7)}:allf=t`
+          '-vf', `noise=alls=${Math.floor(Math.random() * 7)}:allf=t` // Применяем эффект шумоподавления
         ])
-        .on('end', () => resolve())
-        .on('error', (err) => reject(err))
-        .run();
-    });
+        .on('end', () => resolve()) // Успешное завершение обработки
+        .on('error', (err) => reject(err)) // Обработка ошибки
+        .run()
+    })
 
+    // Отправляем сообщение с готовым фото
     await ctx.replyWithHTML(`✅ <b>Ваше фото готово:</b>`)
-    await ctx.replyWithDocument({ source: outputPath });
-    fs.unlinkSync(outputPath)
+    await ctx.replyWithDocument({ source: outputPath }) // Отправляем обработанное изображение
+    fs.unlinkSync(outputPath) // Удаляем временный файл
 
+    // Логируем выполнение функции
     LOG(username, 'Middlewares/Media/PhotoMiddleware')
     return true
   } catch (error) {
-    LOG(username, 'Middlewares/Media/PhotoMiddleware', error);
+    // Логируем ошибку
+    LOG(username, 'Middlewares/Media/PhotoMiddleware', error, ctx)
     return false
   }
 }
-//* END - PhotoMiddleware
+//* END
 
 
-//* START - VideoMiddleware
+//* START
 const VideoMiddleware = async (ctx) => {
-  const { username } = ctx.message.from
+  // Получаем имя пользователя из контекста
+  const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
 
   try {
-    const fileId = ctx.message.video.file_id;
-    const file = await ctx.telegram.getFile(fileId);
-    const inputPath = file.file_path;
-    const outputPath = path.join(process.cwd(), 'cache', `${path.basename(inputPath, path.extname(inputPath))}_${Math.random().toString(36).substring(7)}.mp4`);
+    // Получаем ID видео из сообщения
+    const fileId = ctx.message.video.file_id
+    const file = await ctx.telegram.getFile(fileId) // Получаем информацию о файле
+    const inputPath = file.file_path // Путь к файлу в Telegram
+    const outputPath = path.join(process.cwd(), 'cache', `${path.basename(inputPath, path.extname(inputPath))}_${Math.random().toString(36).substring(7)}.mp4`) // Путь для сохранения обработанного видео
 
-    const fileUrl = `https://api.telegram.org/file/bot${ctx.telegram.token}/${inputPath}`;
+    // URL для доступа к файлу
+    const fileUrl = `https://api.telegram.org/file/bot${ctx.telegram.token}/${inputPath}`
 
+    // Обработка видео с помощью ffmpeg
     await new Promise((resolve, reject) => {
       ffmpeg(fileUrl)
-        .output(outputPath)
+        .output(outputPath) // Указываем выходной путь
         .outputOptions([
-          '-vf', `noise=alls=${Math.floor(Math.random() * 7)}:allf=t`
+          '-vf', `noise=alls=${Math.floor(Math.random() * 7)}:allf=t` // Применяем эффект шумоподавления
         ])
-        .on('end', () => resolve())
-        .on('error', (err) => reject(err))
-        .run();
-    });
+        .on('end', () => resolve()) // Успешное завершение обработки
+        .on('error', (err) => reject(err)) // Обработка ошибки
+        .run()
+    })
 
+    // Отправляем сообщение с готовым видео
     await ctx.replyWithHTML(`✅ <b>Ваше видео готово:</b>`)
-    await ctx.replyWithDocument({ source: outputPath })
-    fs.unlinkSync(outputPath)
+    await ctx.replyWithDocument({ source: outputPath }) // Отправляем обработанное видео
+    fs.unlinkSync(outputPath) // Удаляем временный файл
 
+    // Логируем выполнение функции
     LOG(username, 'Middlewares/Media/VideoMiddleware')
     return true
   } catch (error) {
-    LOG(username, 'Middlewares/Media/VideoMiddleware', error)
+    // Логируем ошибку
+    LOG(username, 'Middlewares/Media/VideoMiddleware', error, ctx)
     return false
   }
 }
-//* END - VideoMiddleware
+//* END
 
 
 module.exports = { PhotoMiddleware, VideoMiddleware }

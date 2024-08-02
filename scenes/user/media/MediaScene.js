@@ -5,7 +5,7 @@ const { LOG } = require('@helpers/base')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
 
-//* START - MediaScene
+//* START
 const MediaScene = new BaseScene('media');
 MediaScene.enter(async (ctx) => {
     const { username } = ctx.message.from
@@ -13,14 +13,14 @@ MediaScene.enter(async (ctx) => {
     try {
         await ctx.replyWithHTML('<b>❇️  UNIFIER PANEL |</b> Выберите действие:', Markup.keyboard([
             ['🔹 Фото', '🔹 Видео'],
-            ['🔺 На главную'],
+            ['⬅️ На главную'],
         ]).resize().oneTime());
 
         LOG(username, 'Scenes/User/Media/MediaScene')
     } catch (error) {
-        LOG(username, 'Scenes/User/Media/MediaScene', error)
+        LOG(username, 'Scenes/User/Media/MediaScene', error, ctx, ctx)
     }
 })
-//* END - MediaScene
+//* END
 
 module.exports = MediaScene

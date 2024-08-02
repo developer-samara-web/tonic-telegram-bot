@@ -4,53 +4,67 @@
 const { Bot } = require('@config/telegram')
 const { LOG, Archive } = require('@helpers/base')
 const { AdminMessage } = require('@messages/AdminMessages')
-const { LoadUsers } = require('@helpers/users')
+const { GetFirebaseUsers } = require('@helpers/firebase')
+const path = require('path')
 
 
-//* START - AdminMessageMiddleware / Сообщение всем пользователям бота
+//* START
 const AdminMessageMiddleware = async (ctx, message) => {
-    const { username } = ctx.message.from
+    // Получаем имя пользователя из контекста
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
 
     try {
-        const usersList = await LoadUsers(ctx)
+        // Получаем список пользователей из Firebase
+        const usersList = await GetFirebaseUsers(ctx)
+        // Генерируем сообщение для администратора
         const msg = await AdminMessage(ctx, message)
 
+        // Перебираем список пользователей
         usersList.forEach(async (user) => {
+            // Проверяем, что ID пользователя не равен ID администратора
             if (user.id != process.env.TELEGRAM_ADMIN_ID){
+                // Отправляем сообщение пользователю
                 await Bot.telegram.sendMessage(user.id, msg, {
                     parse_mode: 'HTML'
-                });
+                })
             }
-        });
+        })
 
+        // Логируем выполнение функции
         LOG(username, 'Middlewares/Admin/AdminMessageMiddleware')
         return true
     } catch (error) {
-        LOG(username, 'Middlewares/Admin/AdminMessageMiddleware', error)
+        // Логируем ошибку
+        LOG(username, 'Middlewares/Admin/AdminMessageMiddleware', error, ctx)
     }
 }
-//* END - AdminMessageMiddleware
+//* END
 
 
-//* START - AdminLogsMiddleware / Запрос файла логов
+//* START
 const AdminLogsMiddleware = async (ctx) => {
-    const { username } = ctx.message.from
-    const path = require('path');
-    const dir = path.join(__dirname, '../logs');
-    const archivePath = path.join(__dirname, '../logs/logs.zip');
+    // Получаем имя пользователя из контекста
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+    const dir = path.join(__dirname, '../logs')
+    const archivePath = path.join(__dirname, '../logs/logs.zip')
 
     try {
-        await Archive(ctx, dir, archivePath);
-        await ctx.replyWithDocument({ source: archivePath, filename: 'logs.zip' });
+        // Архивируем логи
+        await Archive(ctx, dir, archivePath)
+        // Отправляем архивированный файл пользователю
+        await ctx.replyWithDocument({ source: archivePath, filename: 'logs.zip' })
 
+        // Логируем выполнение функции
         LOG(username, 'Middlewares/Admin/AdminLogsMiddleware')
     } catch (error) {
-        LOG(username, 'Middlewares/Admin/AdminLogsMiddleware', error)
+        // Логируем ошибку
+        LOG(username, 'Middlewares/Admin/AdminLogsMiddleware', error, ctx)
     } finally {
+        // Переходим в сцену администратора
         return ctx.scene.enter('admin')
     }
 }
-//* END - AdminLogsMiddleware
+//* END
 
 
 module.exports = { 

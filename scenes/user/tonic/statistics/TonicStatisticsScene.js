@@ -5,7 +5,7 @@ const { LOG } = require('@helpers/base')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
 
-//* START - TonicStatisticsScene
+//* START
 const TonicStatisticsScene = new BaseScene('tonic-stats');
 TonicStatisticsScene.enter(async (ctx) => {
     const { username } = ctx.message.from
@@ -13,15 +13,15 @@ TonicStatisticsScene.enter(async (ctx) => {
         await ctx.replyWithHTML('<b>❇️  TONIC STATISTICS PANEL |</b> Выберите действие:', Markup.keyboard([
             ['🔹 Статистика компании'],
             ['🔹 Статистика ключей', '🔹 Общая статистика'],
-            ['🔻 Назад'],
+            ['⬅️ В меню тоника'],
         ]).resize().oneTime());
 
         LOG(username, 'Scenes/User/Tonic/TonicStatisticsScene')
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/TonicStatisticsScene', error)
+        LOG(username, 'Scenes/User/Tonic/TonicStatisticsScene', error, ctx)
     }
 });
-//* END - TonicStatisticsScene
+//* END
 
 
 module.exports = TonicStatisticsScene

@@ -6,7 +6,7 @@ const { Scenes, Composer, Markup } = require('telegraf')
 const { StatisticsMiddleware } = require('@middlewares/TonicMiddlewares.js')
 
 
-//* START - StageData
+//* START
 const stageData = new Composer()
 stageData.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -22,14 +22,14 @@ stageData.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageData')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageData', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageData', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageData
+//* END
 
 
-//* START - StageSource
+//* START
 const stageSource = new Composer()
 stageSource.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -45,14 +45,14 @@ stageSource.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageSource')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageSource', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageSource', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageSource
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -75,13 +75,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageResult', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/General/TonicStatisticScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('tonic-stats')
     }
 })
-//* END - StageResult
+//* END
 
 
 const TonicStatisticsScene = new Scenes.WizardScene('TonicStatisticsWizard', stageData, stageSource, stageResult)

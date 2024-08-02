@@ -1,9 +1,11 @@
-//Require
+//? SCENE | MEDIAUNIFIERPHOTO
+
+//* Requires
 const { LOG } = require('@helpers/base')
 const { Scenes, Composer } = require('telegraf')
 const { PhotoMiddleware } = require('@middlewares/MediaMiddlewares')
 
-//Stage Photo
+//* START
 const stagePhoto = new Composer()
 stagePhoto.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -16,12 +18,14 @@ stagePhoto.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Media/Photo/stagePhoto')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Media/Photo/stagePhoto', error)
+        LOG(username, 'Scenes/User/Media/Photo/stagePhoto', error, ctx)
         return ctx.scene.leave()
     }
 })
+//* END
 
-//Stage Result
+
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
@@ -38,12 +42,14 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Media/Photo/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Media/Photo/StageResult', error)
+        LOG(username, 'Scenes/User/Media/Photo/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('media')
     }
 })
+//* END
+
 
 const MediaUnifierPhotoScene = new Scenes.WizardScene('MediaUnifierPhotoWizard', stagePhoto, stageResult)
 module.exports = MediaUnifierPhotoScene

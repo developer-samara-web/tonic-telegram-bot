@@ -2,82 +2,85 @@
 
 //* Requires
 const { LOG, UpdateRowData } = require('@helpers/base')
-const { GoogleSpreadsheet } = require('google-spreadsheet');
-const { JWT } = require('google-auth-library')
+const { GoogleSpreadsheet } = require('google-spreadsheet')
+const { AuthSheet } = require('@config/google-sheet')
 
 
-//* START - AuthSheet | Авторизация Google Sheet
-const AuthSheet = async (ctx) => {
-    const { username } = ctx.message.from
-    try {
-        LOG(username, 'Helpers/Sheet/AuthSheet')
-        return serviceAccountAuth = new JWT({
-            email: process.env.SHEET_EMAIL,
-            key: process.env.SHEET_KEY,
-            scopes: [
-                process.env.SHEET_SCOPES_1,
-                process.env.SHEET_SCOPES_2
-            ],
-        });
-    } catch (error) {
-        LOG(username, 'Helpers/Sheet/AuthSheet', error)
-    }
-}
-//* END - AuthSheet
-
-
-//* START - LoadSheet | Запрос получения данных из GoogleSheet тыблицы
+//* START
 const LoadSheet = async (ctx, sheet_id) => {
+    // Авторизация для доступа к Google Sheets
     const auth = await AuthSheet(ctx)
-    const { username } = ctx.message.from
-    try {
-        const sheet = new GoogleSpreadsheet(sheet_id, auth);
-        await sheet.loadInfo();
+    // Получаем имя пользователя из контекста
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
 
+    try {
+        // Создаем объект для работы с таблицей Google Sheets
+        const sheet = new GoogleSpreadsheet(sheet_id, auth)
+        // Загружаем информацию о таблице
+        await sheet.loadInfo()
+
+        // Логируем успешную загрузку таблицы
         LOG(username, 'Helpers/Sheet/LoadSheet')
+        // Возвращаем строки из первого листа таблицы
         return await sheet.sheetsByIndex[0].getRows()
     } catch (error) {
-        LOG(username, 'Helpers/Sheet/LoadSheet', error)
+        // Логируем ошибку, если она произошла
+        LOG(username, 'Helpers/Sheet/LoadSheet', error, ctx)
     }
 }
-//* END - LoadSheet
+//* END
 
 
-//* START - SearchSheet | Поиск строк в GoogleSheet таблице
+//* START
 const SearchSheet = async (ctx, sheet_id, name, status) => {
-    const { username } = ctx.message.from
-    try {
-        const rows = await LoadSheet(ctx, sheet_id);
+    // Получаем имя пользователя из контекста
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
 
+    try {
+        // Загружаем строки из таблицы
+        const rows = await LoadSheet(ctx, sheet_id)
+
+        // Логируем успешное выполнение поиска
         LOG(username, 'Helpers/Sheet/SearchSheet')
-        if (status){
+
+        // Если передан статус, фильтруем строки по статусу
+        if (status) {
             return rows.filter(row => row._rawData[0] === status)
         } else {
+            // Иначе ищем строку по имени
             return rows.find(row => row._rawData[2] === name)
         }
     } catch (error) {
-        LOG(username, 'Helpers/Sheet/SearchSheet', error)
+        // Логируем ошибку, если она произошла
+        LOG(username, 'Helpers/Sheet/SearchSheet', error, ctx)
     }
 }
-//* END - SearchSheet
+//* END
 
 
-//* START - SaveSheet | Сохранение изменений в GoogleSheet таблице
-const SaveSheet = async (ctx, sheet_id, name, update) => {
-    const { username } = ctx.message.from;
+//* START
+const SaveSheet = async (ctx, sheet_id, name, update, offer) => {
+    // Получаем имя пользователя из контекста
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+
     try {
-        const row = await SearchSheet(ctx, sheet_id, name);
-        const [offer] = name.split('_');
-        
-        UpdateRowData(ctx, row, update, offer);
+        // Ищем строку в таблице по имени
+        const row = await SearchSheet(ctx, sheet_id, name)
+
+        // Обновляем данные строки
+        UpdateRowData(ctx, row, update, offer)
+
+        // Логируем успешное выполнение сохранения
         LOG(username, 'Helpers/Sheet/SaveSheet')
 
-        return await row.save();
+        // Сохраняем обновленную строку
+        return await row.save()
     } catch (error) {
-        LOG(username, 'Helpers/Sheet/SaveSheet', error)
+        // Логируем ошибку, если она произошла
+        LOG(username, 'Helpers/Sheet/SaveSheet', error, ctx)
     }
 }
-//* END - SaveSheet
+//* END
 
 
 module.exports = { 

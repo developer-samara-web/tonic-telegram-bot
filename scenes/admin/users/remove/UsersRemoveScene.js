@@ -6,7 +6,7 @@ const { Scenes, Composer } = require('telegraf')
 const { UsersRemoveMiddleware } = require('@middlewares/UsersMiddlewares')
 
 
-//* START - StageId
+//* START
 const stageId = new Composer()
 stageId.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageId.on('text', async (ctx) => {
         LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageId')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageId', error)
+        LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageId', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageId
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
@@ -44,13 +44,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageResult', error)
+        LOG(username, 'Scenes/Admin/Users/Remove/UsersRemoveScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('users')
     }
 })
-//* END - StageResult
+//* END
 
 
 const UsersRemoveScene = new Scenes.WizardScene('UsersRemoveWizard', stageId, stageResult)

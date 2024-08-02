@@ -1,124 +1,117 @@
 //? MIDDLEWARES | MONITORING
 
 //* Requires
-const fs = require('fs');
 const { LOG } = require('@helpers/base')
-const { Status } = require('@helpers/tonic')
-const { SaveSheet, SearchSheet } = require('@helpers/sheet')
-const { GetSheet } = require('@helpers/users')
-const { Bot } = require('@config/telegram')
+const { SearchSheet } = require('@helpers/sheet')
+const { GetFirebaseUser } = require('@helpers/firebase')
+const { GetMonitoringList, SetMonitoringItem } = require('@helpers/firebase')
+const { MonitoringAddMessage, MonitoringMessage } = require('@messages/MonitoringMessages')
 
 
-//* START - MonitoringMiddleware / Мониторинг и создание компаний
-const MonitoringMiddleware = async (ctx) => {
-    const { username } = ctx.message.from
-
-    const LoadMonitoring = async (filePath) => {
-        const fileContents = await fs.promises.readFile(filePath, 'utf8');
-        return JSON.parse(fileContents);
-    }
+//* START
+const MonitoringListMiddleware = async (ctx) => {
+    // Извлекаем имя пользователя и идентификатор из контекста сообщения или callback-запроса
+    const { username, id } = ctx.message?.from || ctx.callbackQuery?.from || 'BOT'
     
-    const UpdateMonitoring = async (filePath, data) => {
-        await fs.promises.writeFile(filePath, JSON.stringify(data, null, 4));
-    }
-    
-    const CheckLink = async (ctx, link, list) => {
-        const sheet_id = await GetSheet(ctx)
-        const sheet_str = await SearchSheet(ctx, sheet_id, link.name)
-        const account = sheet_str._rawData[1]
-        const item = await Status(ctx, link.name, account);
-        
-        if (item.status === 'active') {
-            await SaveSheet(ctx, link.sheet_id, link.name, { type: 'href', data: `https://${item['0'].link}` });
-            list.data = list.data.filter(item => item.name !== link.name);
-            await UpdateMonitoring('./data/monitoring.json', list);
-
-            await Bot.telegram.sendMessage(process.env.TELEGRAM_ADMIN_ID, `✅ <b>Ссылка: ${link.name} обновлена</b>`, {
-                parse_mode: 'HTML'
-            })
-        }
-    }
-
     try {
-        const Monitoring = async () => {
-            let list = await LoadMonitoring('./data/monitoring.json');
-        
-            if (!list.status) {
-                console.log("Функция остановлена.");
-                return;
-            }
-        
-            if (list.data.length) {
-                await Promise.all(list.data.map(link => CheckLink(ctx, link, list)));
-            }
-        
-            setTimeout(Monitoring, process.env.MONITORING_TIMEOUT);
-        }
-        
-        Monitoring();
+        // Получаем список для мониторинга с помощью асинхронной функции
+        const message = await GetMonitoringList(ctx, id)
 
-        LOG(username, 'Messages/Monitoring/MonitoringMiddleware')
+        // Логируем успешное выполнение функции
+        LOG(username, 'Messages/Monitoring/MonitoringListMiddleware')
+
+        // Отправляем сообщение о мониторинге
+        return await MonitoringMessage(ctx, message)
     } catch (error) {
-        LOG(username, 'Messages/Monitoring/MonitoringMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Messages/Monitoring/MonitoringListMiddleware', error, ctx)
     }
 }
-//* END - MonitoringMiddleware
+//* END
 
+//* START
+const MonitoringListAllMiddleware = async (ctx) => {
+    // Извлекаем имя пользователя и идентификатор из контекста сообщения или callback-запроса
+    const { username, id } = ctx.message?.from || ctx.callbackQuery?.from || 'BOT'
 
-//* START - MonitoringAddMiddleware / Переключатель работы мониторинга
-const MonitoringAddMiddleware = async (ctx, name, sheet_id) => {
-    const { username } = ctx.message.from
     try {
-        const LoadMonitoring = async (filePath) => {
-            const fileContents = await fs.promises.readFile(filePath, 'utf8');
-            return JSON.parse(fileContents);
-        }
-        
-        const UpdateMonitoring = async (filePath, data) => {
-            await fs.promises.writeFile(filePath, JSON.stringify(data, null, 4));
-        }
+        // Получаем полный список для мониторинга с помощью асинхронной функции
+        const message = await GetMonitoringList(ctx, id)
 
-        const list = await LoadMonitoring('./data/monitoring.json')
+        // Логируем успешное выполнение функции
+        LOG(username, 'Messages/Monitoring/MonitoringListAllMiddleware')
 
-        list.data.push({
-            name,
-            sheet_id
+        // Отправляем сообщение о мониторинге
+        return await MonitoringMessage(ctx, message)
+    } catch (error) {
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Messages/Monitoring/MonitoringListAllMiddleware', error, ctx)
+    }
+}
+//* END
+
+
+//* START
+const SetMonitoringItemMiddleware = async (ctx) => {
+    // Извлекаем имя пользователя и идентификатор из контекста сообщения или callback-запроса
+    const { username, id } = ctx.message?.from || ctx.callbackQuery?.from || 'BOT'
+    try {
+        // Получаем данные пользователя из Firebase
+        const { sheet, domain } = await GetFirebaseUser(ctx, id)
+        // Ищем данные в таблице на основе определенного статуса мониторинга
+        const sheet_data = await SearchSheet(ctx, sheet, null, process.env.MONITORING_STATUS)
+
+        // Формируем список элементов для мониторинга
+        const list = sheet_data.map(item => {
+            const keywords = [
+                item._rawData[11],
+                item._rawData[12],
+                item._rawData[13],
+                item._rawData[14],
+                item._rawData[15],
+                item._rawData[16],
+            ]
+
+            return {
+                user: id,
+                name: item._rawData[2],
+                offer: item._rawData[3],
+                country: item._rawData[4],
+                pixel: item._rawData[6] || null,
+                token: item._rawData[7] || null,
+                target: item._rawData[1],
+                event: item._rawData[10] || null,
+                sheet: sheet,
+                domain: domain,
+                keywords: keywords.filter(element => element !== undefined),
+                status: '🔸 В очереди'
+            }
         })
 
-        UpdateMonitoring('./data/monitoring.json', list)
-
-        LOG(username, 'Messages/Monitoring/MonitoringAddMiddleware')
-    } catch (error) {
-        LOG(username, 'Messages/Monitoring/MonitoringAddMiddleware', error)
-    }
-}
-//* END - MonitoringAddMiddleware
-
-
-//* START - MonitoringSwitcherMiddleware/ Переключатель работы мониторинга
-const MonitoringSwitcherMiddleware = async (ctx, status) => {
-    const { username } = ctx.message.from
-    try {
-        const config = require('@data/monitoring')
-        config.status = status
-        fs.writeFileSync('./data/monitoring.json', JSON.stringify(config, null, 4))
-
-        if (status) {
-            MonitoringMiddleware(ctx)
+        // Устанавливаем каждый элемент для мониторинга
+        for (const item of list) {
+            await SetMonitoringItem(ctx, item)
         }
 
-        LOG(username, 'Messages/Monitoring/MonitoringSwitcherMiddleware')
+        // Получаем обновленный список для мониторинга
+        const message = await GetMonitoringList(ctx, id)
+        // Отправляем сообщение о добавлении мониторинга
+        await MonitoringAddMessage(ctx, message, 'update')
+
+        // Логируем успешное выполнение функции
+        LOG(username, 'Messages/Monitoring/SetMonitoringItemMiddleware')
+        return true
     } catch (error) {
-        LOG(username, 'Messages/Monitoring/MonitoringSwitcherMiddleware', error)
-    } finally {
-        return ctx.scene.enter('monitoring')
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Messages/Monitoring/SetMonitoringItemMiddleware', error, ctx)
+        return false
     }
 }
-//* END - MonitoringSwitcherMiddleware
+//* END
 
 
 module.exports = { 
-    MonitoringAddMiddleware, 
-    MonitoringMiddleware, 
-    MonitoringSwitcherMiddleware 
+    MonitoringListMiddleware,
+    MonitoringListAllMiddleware,
+    SetMonitoringItemMiddleware
 }

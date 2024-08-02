@@ -6,7 +6,7 @@ const { Scenes, Composer, Markup } = require('telegraf')
 const { KeywordsMiddleware } = require('@middlewares/TonicMiddlewares')
 
 
-//* START - StageName
+//* START
 const stageName = new Composer()
 stageName.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageName.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageName')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageName', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageName', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageName
+//* END
 
 
-//* START - StageDate
+//* START
 const stageDate = new Composer()
 stageDate.on('text', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -42,14 +42,14 @@ stageDate.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageDate')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageDate', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageDate', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageDate
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -72,13 +72,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageResult', error)
+        LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('tonic-stats')
     }
 })
-//* END - StageResult
+//* END
 
 
 const TonicKeywordsScene = new Scenes.WizardScene('TonicKeywordsWizard', stageName, stageDate, stageResult)

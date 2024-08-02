@@ -1,9 +1,12 @@
-//Require
+//? SCENE | MEDIAUNIFIERVIDEO
+
+//* Requires
 const { LOG } = require('@helpers/base')
-const { Scenes, Composer, Markup } = require('telegraf')
+const { Scenes, Composer } = require('telegraf')
 const { VideoMiddleware } = require('@middlewares/MediaMiddlewares')
 
-//Stage Video
+
+//* START
 const stageVideo = new Composer()
 stageVideo.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -16,12 +19,14 @@ stageVideo.on('text', async (ctx) => {
         LOG(username, 'Scenes/Media/Video/stageVideo')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/Media/Video/stageVideo', error)
+        LOG(username, 'Scenes/Media/Video/stageVideo', error, ctx)
         return ctx.scene.leave()
     }
 })
+//* END
 
-//Stage Result
+
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { username } = ctx.message.from
@@ -38,12 +43,14 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/Media/Video/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/Media/Video/StageResult', error)
+        LOG(username, 'Scenes/Media/Video/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('media')
     }
 })
+//* END
+
 
 const MediaUnifierVideoScene = new Scenes.WizardScene('MediaUnifierVideoWizard', stageVideo, stageResult)
 module.exports = MediaUnifierVideoScene

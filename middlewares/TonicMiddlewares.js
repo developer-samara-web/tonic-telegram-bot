@@ -4,183 +4,255 @@
 const { LOG, GroupByDate, CalculateStatistics, FilterKeyword, FilterStats } = require('@helpers/base')
 const { Create, Keywords, GetKeywords, Callback, GetCallback, Pixel, Status, Statistics, List } = require('@helpers/tonic')
 const { StatusMessage, StatisticsMessage, KeywordMessage, CreateMessage, CompanyMessage } = require('@messages/TonicMessages')
-const { GetSheet } = require('@helpers/users')
+const { GetUserSheet } = require('@helpers/firebase')
 const { LoadSheet, SearchSheet } = require('@helpers/sheet')
 
 
-//* START - CreateMiddleware / Создание компании
+//* START
 const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, pixel, token, target, event }, mode) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
-        const StageCreate = await Create(ctx, name, offer, country, target)
+        // Создаем новый объект (StageCreate)
+        const StageCreate = await Create(ctx, encodeURIComponent(name), encodeURIComponent(offer), country, target)
+        // Ищем ID объекта с указанным статусом и именем (StageId)
         const StageId = await SearchMiddleware(ctx, 'pending', name, target)
-        const StageKeyword = keywords != '🚫 Пропустить' ? await Keywords(ctx, Number(StageId[0].id), keywords, target) : false
-        const StageCallback = domain != '🚫 Пропустить' ? await Callback(ctx, Number(StageId[0].id), domain, target) : false
+        // Добавляем ключевые слова, если они указаны (StageKeyword)
+        const StageKeyword = keywords ? await Keywords(ctx, Number(StageId[0].id), keywords, target) : false
+        // Настраиваем callback, если указан домен (StageCallback)
+        const StageCallback = domain ? await Callback(ctx, Number(StageId[0].id), domain, target) : false
+        // Настраиваем пиксель, если целевая платформа не Facebook (StagePixel)
         const StagePixel = target != 'facebook' ? await Pixel(ctx, Number(StageId[0].id), pixel, token, event, target) : false
 
-        LOG(username, 'Middlewares/Tonic/CreateMiddleware');
-        if(mode){
+        // Логируем успешное выполнение функции
+        LOG(username, 'Middlewares/Tonic/CreateMiddleware')
+
+        // Если режим mode активен, возвращаем true
+        if (mode) {
             return true
         } else {
+            // В противном случае отправляем сообщение о создании
             return await CreateMessage(ctx, name, StageCreate, StageId, StageKeyword, StageCallback, StagePixel)
         }
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/CreateMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/CreateMiddleware', error, ctx)
     }
 }
-//* END - CreateMiddleware
+//* END
 
 
-//* START - StatusMiddleware / Получение статуса активности компании
+//* START
 const StatusMiddleware = async (ctx, name) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
-        const sheet_id = await GetSheet(ctx)
+        // Получаем идентификатор таблицы пользователя
+        const sheet_id = await GetUserSheet(ctx)
+        // Ищем строку в таблице по указанному имени
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
+        // Получаем аккаунт из строки таблицы
         const account = sheet_str._rawData[1]
 
+        // Запрашиваем статус
         const response = await Status(ctx, name, account)
+        // Ищем объект в базе данных по статусу, имени и аккаунту
         const item = await SearchMiddleware(ctx, response.status, name, account)
+        // Получаем callback для найденного объекта
         const callback = await GetCallback(ctx, item[0].id, account)
+        // Получаем ключевые слова для найденного объекта
         const keywords = await GetKeywords(ctx, item[0].id, account)
 
+        // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Tonic/StatusMiddleware')
+        // Возвращаем сообщение со статусом
         return await StatusMessage(ctx, { status: response.status, ...item }, keywords, callback)
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/StatusMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/StatusMiddleware', error, ctx)
     }
 }
-//* END - StatusMiddleware
+//* END
 
 
-//* StatisticsMiddleware / Получение общей статистики компаний
+//* START
 const StatisticsMiddleware = async (ctx, { date, source }) => {
-    const { username } = ctx.message.from;
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
-        const response = await Statistics(ctx, date);
+        // Запрашиваем статистику за указанный период
+        const response = await Statistics(ctx, date)
 
-        const sheet_id = await GetSheet(ctx)
+        // Получаем идентификатор таблицы пользователя
+        const sheet_id = await GetUserSheet(ctx)
+        // Загружаем таблицу пользователя
         const sheet = await LoadSheet(ctx, sheet_id)
 
-        const compains = sheet.map(row => {
-             return row._rawData[2]
-        })
-        
-        const filter = FilterStats(response, source, compains);
+        // Формируем список кампаний из таблицы
+        const compains = sheet.map(row => row._rawData[2])
 
-        LOG(username, 'Middlewares/Tonic/StatisticsMiddleware');
-        return await StatisticsMessage(ctx, filter);
+        // Фильтруем статистику по источнику и кампаниям
+        const filter = FilterStats(response, source, compains)
+
+        // Логируем успешное выполнение функции
+        LOG(username, 'Middlewares/Tonic/StatisticsMiddleware')
+        // Возвращаем сообщение со статистикой
+        return await StatisticsMessage(ctx, filter)
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/StatisticsMiddleware', error);
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/StatisticsMiddleware', error, ctx)
     }
-};
-//* END - StatisticsMiddleware
+}
+//* END
 
 
-//* StatsKeywordsMiddleware / Получение статистики ключей компании
+//* START
 const KeywordsMiddleware = async (ctx, { date, company_name }) => {
-    const { username } = ctx.message.from;
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
-        const response = await Statistics(ctx, date);
-        const filter = FilterKeyword(response, company_name);
+        // Запрашиваем статистику за указанный период
+        const response = await Statistics(ctx, date)
+        // Фильтруем статистику по названию компании
+        const filter = FilterKeyword(response, company_name)
 
-        LOG(username, 'Middlewares/Tonic/StatsKeywordsMiddleware');
-        return await KeywordMessage(ctx, filter);
+        // Логируем успешное выполнение функции
+        LOG(username, 'Middlewares/Tonic/StatsKeywordsMiddleware')
+        // Возвращаем сообщение с отфильтрованной статистикой по ключевым словам
+        return await KeywordMessage(ctx, filter)
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/StatsKeywordsMiddleware', error);
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/StatsKeywordsMiddleware', error, ctx)
     }
-};
-//* END - KeywordsMiddleware
+}
+//* END
 
 
-//* CompanyMiddleware / Получение статистики по компании
+//* START
 const CompanyMiddleware = async (ctx, { company_name, date }) => {
-    const { username } = ctx.message.from;
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
-        const response = await Statistics(ctx, date);
-        const filter = response.filter(obj => obj.campaign_name === company_name);
-        const grouped = GroupByDate(filter, company_name);
-        const overall = CalculateStatistics(grouped, company_name);
+        // Запрашиваем статистику за указанный период
+        const response = await Statistics(ctx, date)
+        // Фильтруем статистику по названию компании
+        const filter = response.filter(obj => obj.campaign_name === company_name)
+        // Группируем статистику по датам
+        const grouped = GroupByDate(filter, company_name)
+        // Рассчитываем общую статистику
+        const overall = CalculateStatistics(grouped, company_name)
 
-        LOG(username, 'Middlewares/Tonic/CompanyMiddleware');
+        // Логируем успешное выполнение функции
+        LOG(username, 'Middlewares/Tonic/CompanyMiddleware')
+        // Возвращаем сообщение с общей статистикой и статистикой по датам
         return await CompanyMessage(ctx, {
             overall: overall,
             byDate: Object.values(grouped)
         })
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/CompanyMiddleware', error);
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/CompanyMiddleware', error, ctx)
     }
-};
+}
+//* END
 
-//* SearchMiddleware / Поиск компании по параметрам
+
+//* START
 const SearchMiddleware = async (ctx, status, name, account) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
+        // Получаем список объектов с указанным статусом и аккаунтом
         const list = await List(ctx, status, account)
 
-        LOG(username, 'Middlewares/Tonic/SearchMiddleware');
-        return await list.filter(obj => obj.name === name)
+        // Логируем успешное выполнение функции
+        LOG(username, 'Middlewares/Tonic/SearchMiddleware')
+        // Фильтруем список по имени и возвращаем результат
+        return list.filter(obj => obj.name === name)
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/SearchMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/SearchMiddleware', error, ctx)
     }
 }
+//* END
 
-//* SetPixelMiddleware / Установка пикселя для компании
+
+//* START
 const SetPixelMiddleware = async (ctx, { name, pixel, token, event }) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
+        // Получаем идентификатор таблицы
         const sheet_id = await GetSheet(ctx)
+        // Ищем строку в таблице по имени
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
+        // Получаем аккаунт из найденной строки
         const account = sheet_str._rawData[1]
+        // Ищем объект по имени и аккаунту
         const [{ id }] = await SearchMiddleware(ctx, null, name, account)
 
-        LOG(username, 'Middlewares/Tonic/SetPixelMiddleware');
+        // Логируем успешное выполнение функции
+        LOG(username, 'Middlewares/Tonic/SetPixelMiddleware')
+        // Устанавливаем пиксель и возвращаем результат
         return await Pixel(ctx, Number(id), pixel, token, event, account)
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/SetPixelMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/SetPixelMiddleware', error, ctx)
     }
 }
+//* END
 
-//* SetCallbackMiddleware / Установка Postback ссылок для компании
+
+//* START
 const SetCallbackMiddleware = async (ctx, { name, domain }) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
+        // Получаем идентификатор таблицы
         const sheet_id = await GetSheet(ctx)
+        // Ищем строку в таблице по имени
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
+        // Получаем аккаунт из найденной строки
         const account = sheet_str._rawData[1]
+        // Ищем объект по имени и аккаунту
         const [{ id }] = await SearchMiddleware(ctx, null, name, account)
 
+        // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Tonic/SetCallbackMiddleware')
+        // Устанавливаем колбэк и возвращаем результат
         return await Callback(ctx, Number(id), domain, account)
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/SetCallbackMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/SetCallbackMiddleware', error, ctx)
     }
 }
+//* END
 
-//* SetKeywordsMiddleware / Установка ключей для компании
+
+//* START
 const SetKeywordsMiddleware = async (ctx, { name, keywords }) => {
-    const { username } = ctx.message.from
+    const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
+        // Получаем идентификатор таблицы
         const sheet_id = await GetSheet(ctx)
+        // Ищем строку в таблице по имени
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
+        // Получаем аккаунт из найденной строки
         const account = sheet_str._rawData[1]
+        // Ищем объект по имени и аккаунту
         const [{ id }] = await SearchMiddleware(ctx, null, name, account)
 
+        // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Tonic/SetKeywordsMiddleware')
+        // Устанавливаем ключевые слова и возвращаем результат
         return await Keywords(ctx, Number(id), keywords, account)
     } catch (error) {
-        LOG(username, 'Middlewares/Tonic/SetKeywordsMiddleware', error)
+        // Логируем ошибку, если что-то пошло не так
+        LOG(username, 'Middlewares/Tonic/SetKeywordsMiddleware', error, ctx)
     }
 }
+//* END
 
 
-module.exports = { 
-    StatusMiddleware, 
-    StatisticsMiddleware, 
-    KeywordsMiddleware, 
-    CompanyMiddleware, 
-    CreateMiddleware, 
-    SetPixelMiddleware, 
-    SetCallbackMiddleware, 
-    SetKeywordsMiddleware 
+module.exports = {
+    StatusMiddleware,
+    StatisticsMiddleware,
+    KeywordsMiddleware,
+    CompanyMiddleware,
+    CreateMiddleware,
+    SetPixelMiddleware,
+    SetCallbackMiddleware,
+    SetKeywordsMiddleware
 }

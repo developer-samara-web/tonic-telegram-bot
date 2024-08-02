@@ -8,8 +8,8 @@ require('module-alias/register');
 const { Bot } = require('@config/telegram')
 const { Scenes, session } = require('telegraf')
 const { Permissions } = require('@helpers/permissions')
-const { CompanyAction } = require('@actions/СompanyActions')
 const { PermissionsAction, PermissionsAdminAction } = require('@actions/PermissionActions')
+const { MonitoringAction } = require('@actions/MonitoringAction')
 
 //* Configs
 const stages = require('@config/stages')
@@ -33,9 +33,9 @@ Bot.action(/(grant_access|deny_access)/, async (ctx) => {
 Bot.action(/(grant_admin_access|deny_admin_access)/, async (ctx) => {
     await PermissionsAdminAction(ctx);
 })
-Bot.action(/(complite)/, async (ctx) => {
-    await CompanyAction(ctx);
-});
+Bot.action(/(create_monitoring|delete_monitoring|refresh_monitoring|clear_monitoring)/, async (ctx) => {
+    await MonitoringAction(ctx)
+})
 
 
 //* Welcome message

@@ -6,7 +6,7 @@ const { Scenes, Composer } = require('telegraf')
 const { SetKeywordsMiddleware } = require('@middlewares/TonicMiddlewares')
 
 
-//* START - StageName
+//* START
 const stageName = new Composer()
 stageName.on('text', async (ctx) => {
     const { username } = ctx.message.from
@@ -18,14 +18,14 @@ stageName.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageName')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageName', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageName', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageName
+//* END
 
 
-//* START - StageKeywords
+//* START
 const stageKeywords = new Composer()
 stageKeywords.on('text', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -38,14 +38,14 @@ stageKeywords.on('text', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageKeywords')
         return ctx.wizard.next()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageKeywords', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageKeywords', error, ctx)
         return ctx.scene.leave()
     }
 })
-//* END - StageKeywords
+//* END
 
 
-//* START - StageResult
+//* START
 const stageResult = new Composer()
 stageResult.on('message', async (ctx) => {
     const { data } = ctx.wizard.state
@@ -66,13 +66,13 @@ stageResult.on('message', async (ctx) => {
         LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageResult')
         return ctx.scene.leave()
     } catch (error) {
-        LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageResult', error)
+        LOG(username, 'Scenes/User/Tonic/Edits/Keywords/TonicKeywordsScene/StageResult', error, ctx)
         return ctx.scene.leave()
     } finally {
         return ctx.scene.enter('tonic-edits')
     }
 })
-//* END - StageResult
+//* END
 
 
 const TonicSetKeywordsScene = new Scenes.WizardScene('TonicSetKeywordsWizard', stageName, stageKeywords, stageResult)

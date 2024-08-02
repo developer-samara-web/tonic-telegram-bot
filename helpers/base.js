@@ -7,288 +7,384 @@ const path = require('path');
 const { Markup } = require('telegraf')
 
 
-//* START - Logger
-const LOG = async (user, object, error) => {
-    const now = new Date();
-    const date = now.toISOString().slice(0, 10);
-    const time = now.toTimeString().slice(0, 8);
-    const logMessage = `[${error ? 'ERROR' : 'INFO'}][${date} ${time}] User: ${user}, Function: ${object}, ${error ? 'ERROR' : 'INFO'}: ${error ? error : 'OK'}\n`;
+//* START
+const LOG = async (user, object, error, ctx) => {
+    // Получаем текущую дату и время
+    const now = new Date()
+    const date = now.toISOString().slice(0, 10) // Форматируем дату в ISO формате (YYYY-MM-DD)
+    const time = now.toTimeString().slice(0, 8) // Форматируем время в HH:MM:SS
 
-    const logDir = path.join(__dirname, '..', 'logs');
+    // Формируем сообщение для лога
+    const logMessage = `[${error ? 'ERROR' : 'INFO'}][${date} ${time}] User: ${user}, Function: ${object}, ${error ? 'ERROR' : 'INFO'}: ${error ? error : 'OK'}\n`
+
+    // Определяем директорию для логов
+    const logDir = path.join(__dirname, '..', 'logs')
 
     try {
-        await fs.promises.mkdir(logDir, { recursive: true });
-        const filePath = path.join(logDir, `${date}.log`);
-        await fs.promises.appendFile(filePath, logMessage);
+        // Создаем директорию для логов, если она не существует
+        await fs.promises.mkdir(logDir, { recursive: true })
+        // Определяем путь к файлу лога с именем по текущей дате
+        const filePath = path.join(logDir, `${date}.log`)
+        // Записываем сообщение в файл лога
+        await fs.promises.appendFile(filePath, logMessage)
+
+        // Если произошла ошибка, отправляем сообщение админу в Telegram
+        if (error) {
+            await ctx.telegram.sendMessage(
+                process.env.TELEGRAM_ADMIN_ID, 
+                `🚫  <b>Ошибка от ${user}:</b>\n${error}\n\n<b>🔸  Функция:</b>\n[${object}]\n\n<b>🔸  Подробнее:</b>\n${error.stack}`, 
+                { parse_mode: 'HTML' }
+            )
+        }
     } catch (error) {
-        console.error('Ошибка записи логов:', error);
+        // Если произошла ошибка при записи лога, выводим сообщение в консоль
+        console.error('Ошибка записи логов:', error)
     }
 }
-//* END - Logger
+//* END
 
 
-//* START - Archive
+//* START
 const Archive = (ctx, logDirectory, outputFilePath) => {
-    const { username } = ctx.message.from
+    // Извлекаем username из контекста сообщения или callbackQuery, если не найден, устанавливаем значение 'BOT'
+    const { username = 'BOT' } = ctx.message?.from || ctx.callbackQuery?.from;
+
     try {
         return new Promise((resolve, reject) => {
+            // Создаем поток для записи архива в указанный файл
             const output = fs.createWriteStream(outputFilePath);
+            // Создаем архиватор с использованием формата zip и уровнем сжатия 9
             const archive = archiver('zip', { zlib: { level: 9 } });
 
+            // Обработчик события 'close' для потока вывода, разрешаем промис с путём к архиву
             output.on('close', () => {
                 resolve(outputFilePath);
             });
 
+            // Обработчик ошибок архивации, отклоняем промис в случае ошибки
             archive.on('error', reject);
 
+            // Направляем данные архива в поток вывода
             archive.pipe(output);
+
+            // Добавляем файлы в архив, игнорируя файл самого архива
             archive.glob('**/*', {
                 cwd: logDirectory,
                 ignore: [path.basename(outputFilePath)]
             });
 
+            // Завершаем архивацию
             archive.finalize();
 
-            LOG(username, 'Helpers/Base/Archive')
+            // Логируем успешное начало архивации
+            LOG(username, 'Helpers/Base/Archive');
         });
     } catch (error) {
-        LOG(username, 'Helpers/Base/Archive', error)
+        // Логируем ошибку, если она возникла
+        LOG(username, 'Helpers/Base/Archive', error, ctx);
     }
 }
-//* END - Archive
+//* END
 
 
-//* START - DateCurent
+//* START
 const DateCurent = async (ctx, date) => {
-    const { username } = ctx.message.from
+    // Извлекаем username из контекста сообщения или callbackQuery, если не найден, устанавливаем значение 'BOT'
+    const { username = 'BOT' } = ctx.message?.from || ctx.callbackQuery?.from
 
     try {
+        // Асинхронная функция для генерации даты, отнимая указанное количество дней от текущей даты
         const dateGenerateAsync = async (num) => {
-            const previousDay = new Date();
-            previousDay.setDate(previousDay.getDate() - num);
+            const previousDay = new Date()
+            previousDay.setDate(previousDay.getDate() - num)
 
             const [year, month, day] = [
                 previousDay.getFullYear(),
-                String(previousDay.getMonth() + 1).padStart(2, '0'),
-                String(previousDay.getDate()).padStart(2, '0')
+                String(previousDay.getMonth() + 1).padStart(2, '0'), // Форматируем месяц с ведущим нулём
+                String(previousDay.getDate()).padStart(2, '0') // Форматируем день с ведущим нулём
             ];
 
-            return `${year}-${month}-${day}`;
+            return `${year}-${month}-${day}` // Возвращаем дату в формате YYYY-MM-DD
         };
 
+        // Обрабатываем значение параметра date
         switch (date) {
             case 'Сегодня':
+                // Логируем действие для текущего пользователя
                 LOG(username, 'Helpers/Base/DateCurent')
-                return `date=${await dateGenerateAsync(0)}`;
+                // Возвращаем текущую дату
+                return `date=${await dateGenerateAsync(0)}`
             case 'Вчера':
-                LOG(username, 'Helpers/Base/DateCurent')
-                return `date=${await dateGenerateAsync(1)}`;
+                // Логируем действие для текущего пользователя
+                LOG(username, 'Helpers/Base/DateCurent');
+                // Возвращаем дату вчерашнего дня
+                return `date=${await dateGenerateAsync(1)}`
             case 'За 3 дня':
+                // Логируем действие для текущего пользователя
                 LOG(username, 'Helpers/Base/DateCurent')
+                // Возвращаем даты за последние 3 дня
                 return `from=${await dateGenerateAsync(3)}&to=${await dateGenerateAsync(0)}`
             case 'За неделю':
-                LOG(username, 'Helpers/Base/DateCurent')
+                // Логируем действие для текущего пользователя
+                LOG(username, 'Helpers/Base/DateCurent');
+                // Возвращаем даты за последнюю неделю
                 return `from=${await dateGenerateAsync(7)}&to=${await dateGenerateAsync(0)}`
             case 'За месяц':
+                // Логируем действие для текущего пользователя
                 LOG(username, 'Helpers/Base/DateCurent')
+                // Возвращаем даты за последний месяц
                 return `from=${await dateGenerateAsync(30)}&to=${await dateGenerateAsync(0)}`
             default:
+                // Логируем действие для текущего пользователя
                 LOG(username, 'Helpers/Base/DateCurent')
-                return `from=${date.split(':')[0]}&to=${date.split(':')[1]}`;
+                // Возвращаем даты, разделённые параметром ':'
+                return `from=${date.split(':')[0]}&to=${date.split(':')[1]}`
         }
     } catch (error) {
-        LOG(username, 'Helpers/Base/DateCurent', error)
+        // Логируем ошибку, если она возникла
+        LOG(username, 'Helpers/Base/DateCurent', error, ctx)
     }
 }
-//* END - DateCurent
+//* END
 
 
-//* START - GroupByDate
-const GroupByDate = (data, companyName) => {
+//* START
+const GroupByDate = (data) => {
+    // Используем метод reduce для агрегации данных по дате
     return data.reduce((acc, item) => {
-        const dateKey = item.date;
+        const dateKey = item.date; // Получаем ключ даты из текущего элемента
+
+        // Если ключ даты еще не существует в аккумуляторе, создаем новый объект для этой даты
         if (!acc[dateKey]) {
             acc[dateKey] = {
-                date: dateKey,
-                campaign_name: item.campaign_name,
-                clicks: 0,
-                revenueUsd: 0.0,
-                CPC: 0.0,
-                items: []
+                date: dateKey, // Сохраняем дату
+                campaign_name: item.campaign_name, // Сохраняем название кампании
+                clicks: 0, // Инициализируем количество кликов
+                revenueUsd: 0.0, // Инициализируем доход в долларах
+                CPC: 0.0, // Инициализируем стоимость за клик
+                items: [] // Инициализируем массив для хранения элементов
             };
         }
+
+        // Увеличиваем общее количество кликов для данной даты
         acc[dateKey].clicks += Number(item.clicks);
+        // Увеличиваем общий доход для данной даты
         acc[dateKey].revenueUsd += parseFloat(item.revenueUsd);
+        // Добавляем текущий элемент в массив элементов для данной даты
         acc[dateKey].items.push(item);
-        return acc;
-    }, {});
+
+        return acc; // Возвращаем аккумулятор для следующей итерации
+    }, {}); // Начинаем с пустого объекта
 }
-//* END - GroupByDate
+//* END
 
 
-//* START - CalculateStatistics
+//* START
 const CalculateStatistics = (groupedData, companyName) => {
-    let totalClicks = 0;
-    let totalRevenueUsd = 0.0;
+    let totalClicks = 0 // Инициализируем переменную для общего количества кликов
+    let totalRevenueUsd = 0.0 // Инициализируем переменную для общего дохода в долларах
 
+    // Проходим по всем ключам дат в сгруппированных данных
     for (const dateKey in groupedData) {
-        totalClicks += groupedData[dateKey].clicks;
-        totalRevenueUsd += groupedData[dateKey].revenueUsd;
-        groupedData[dateKey].CPC = (groupedData[dateKey].revenueUsd / groupedData[dateKey].clicks).toFixed(2);
+        totalClicks += groupedData[dateKey].clicks // Суммируем клики для каждой даты
+        totalRevenueUsd += groupedData[dateKey].revenueUsd // Суммируем доход для каждой даты
+        // Вычисляем CPC (стоимость за клик) для текущей даты и округляем до двух знаков
+        groupedData[dateKey].CPC = (groupedData[dateKey].revenueUsd / groupedData[dateKey].clicks).toFixed(2)
     }
 
+    // Возвращаем объект со статистикой кампании
     return {
-        campaign_name: companyName,
-        totalClicks: totalClicks,
-        totalRevenueUsd: totalRevenueUsd.toFixed(2),
-        totalCPC: (totalRevenueUsd / totalClicks).toFixed(2)
-    };
+        campaign_name: companyName, // Название кампании
+        totalClicks: totalClicks, // Общее количество кликов
+        totalRevenueUsd: totalRevenueUsd.toFixed(2), // Общий доход, округленный до двух знаков
+        totalCPC: (totalRevenueUsd / totalClicks).toFixed(2) // Общая стоимость за клик, округленная до двух знаков
+    }
 }
-//* END - CalculateStatistics
+//* END
 
 
-//* START - CreateKeywordItem
+//* START
 const CreateKeywordItem = (item) => {
+    // Создаем и возвращаем новый объект, основанный на переданном элементе
     return {
-        ...item,
-        CPC: (item.revenueUsd / item.clicks).toFixed(2)
-    };
+        ...item, // Распаковываем все свойства исходного элемента
+        CPC: (item.revenueUsd / item.clicks).toFixed(2) // Вычисляем CPC (стоимость за клик) и округляем до двух знаков
+    }
 }
-//* END - CreateKeywordItem
+//* END
 
 
-//* START - KeywordUpdateItem
+//* START
 const KeywordUpdateItem = (existingItem, item) => {
-    existingItem.clicks = String(Number(existingItem.clicks) + Number(item.clicks));
-    existingItem.revenueUsd = (parseFloat(existingItem.revenueUsd) + parseFloat(item.revenueUsd)).toFixed(2);
-    existingItem.CPC = (existingItem.revenueUsd / existingItem.clicks).toFixed(2);
+    // Обновляем количество кликов, складывая существующее и новое значение
+    existingItem.clicks = String(Number(existingItem.clicks) + Number(item.clicks))
+    // Обновляем общий доход, складывая существующий и новый доход, затем округляем до двух знаков
+    existingItem.revenueUsd = (parseFloat(existingItem.revenueUsd) + parseFloat(item.revenueUsd)).toFixed(2)
+    // Вычисляем CPC (стоимость за клик) как отношение общего дохода к количеству кликов и округляем до двух знаков
+    existingItem.CPC = (existingItem.revenueUsd / existingItem.clicks).toFixed(2)
 }
-//* END - KeywordUpdateItem
+//* END
 
 
-//* START - FilterKeyword
+//* START
 const FilterKeyword = (data, companyName) => {
-    return data.filter(obj => obj.campaign_name === companyName)
+    // Фильтруем данные по имени компании и затем редуцируем их для создания агрегированного списка
+    return data.filter(obj => obj.campaign_name === companyName) // Оставляем только те объекты, которые соответствуют заданному имени компании
         .reduce((acc, item) => {
-            const existingItem = acc.find(group => group.campaign_name === item.campaign_name && group.keyword === item.keyword);
+            // Находим существующий элемент в аккумуляторе по имени кампании и ключевому слову
+            const existingItem = acc.find(group => group.campaign_name === item.campaign_name && group.keyword === item.keyword)
             if (existingItem) {
-                KeywordUpdateItem(existingItem, item);
+                // Если элемент существует, обновляем его данные
+                KeywordUpdateItem(existingItem, item)
             } else {
-                acc.push(CreateKeywordItem(item));
+                // Если элемента нет, создаем новый и добавляем его в аккумулятор
+                acc.push(CreateKeywordItem(item))
             }
-            return acc;
-        }, []);
+            return acc // Возвращаем аккумулятор для следующей итерации
+        }, []) // Инициализируем аккумулятор пустым массивом
 }
-//* END - FilterKeyword
+//* END
 
 
-//* START - CreateStatsItem
+//* START
 const CreateStatsItem = (item) => {
+    // Создаем и возвращаем новый объект, основанный на переданном элементе
     return {
-        ...item,
-        revenueUsd: parseFloat(item.revenueUsd).toFixed(2),
-        CPC: (item.revenueUsd / item.clicks).toFixed(2)
-    };
+        ...item, // Распаковываем все свойства исходного элемента
+        revenueUsd: parseFloat(item.revenueUsd).toFixed(2), // Преобразуем доход в число и округляем до двух знаков
+        CPC: (item.revenueUsd / item.clicks).toFixed(2) // Вычисляем CPC (стоимость за клик) и округляем до двух знаков
+    }
 }
-//* END - CreateStatsItem
+//* END
 
 
-//* START - UpdateStatsItem
+//* START
 const UpdateStatsItem = (existingItem, item) => {
-    existingItem.clicks = String(Number(existingItem.clicks) + Number(item.clicks));
-    existingItem.revenueUsd = (parseFloat(existingItem.revenueUsd) + parseFloat(item.revenueUsd)).toFixed(2);
-    existingItem.CPC = (existingItem.revenueUsd / existingItem.clicks).toFixed(2);
+    // Обновляем количество кликов, складывая существующее и новое значение
+    existingItem.clicks = String(Number(existingItem.clicks) + Number(item.clicks))
+    
+    // Обновляем общий доход, складывая существующий и новый доход, затем округляем до двух знаков
+    existingItem.revenueUsd = (parseFloat(existingItem.revenueUsd) + parseFloat(item.revenueUsd)).toFixed(2)
+    
+    // Вычисляем CPC (стоимость за клик) как отношение общего дохода к количеству кликов и округляем до двух знаков
+    existingItem.CPC = (existingItem.revenueUsd / existingItem.clicks).toFixed(2)
 }
-//* END - UpdateStatsItem
+//* END
 
 
-//* START - FilterStats
+//* START
 const FilterStats = (data, source, compains) => {
+    // Фильтруем данные, чтобы получить элементы, чьи названия кампаний присутствуют в массиве compains
+    const filter = data.filter(item => compains.includes(item.campaign_name))
 
-    const filter = data.filter(item => compains.includes(item.campaign_name));
-
+    // Дополнительно фильтруем по источнику и обрабатываем элементы
     return filter.filter(obj => obj.network === source)
         .reduce((acc, item) => {
-            const existingItem = acc.find(group => group.campaign_name === item.campaign_name);
+            // Ищем существующий элемент в аккумулированном массиве по имени кампании
+            const existingItem = acc.find(group => group.campaign_name === item.campaign_name)
             if (existingItem) {
-                UpdateStatsItem(existingItem, item);
+                // Если элемент найден, обновляем его данные
+                UpdateStatsItem(existingItem, item)
             } else {
-                acc.push(CreateStatsItem(item));
+                // Если элемент не найден, создаем новый элемент и добавляем в массив
+                acc.push(CreateStatsItem(item))
             }
-            return acc;
-        }, []);
+            return acc // Возвращаем аккумулированный массив
+        }, []) // Инициализируем пустой массив для аккумуляции
 }
-//* END - FilterStats
+//* END
 
 
-//* START - CreateURL | Создание URL компании на основе параметров
+//* START
 const CreateURL = (ctx, update, offer, network) => {
-    const { username } = ctx.message.from
-    const adTitle = offer.replace(/([a-z])([A-Z])/g, '$1+$2');
+    // Извлекаем имя пользователя, устанавливаем значение по умолчанию 'BOT'
+    const { username = 'BOT' } = ctx.message?.from || ctx.callbackQuery?.from
+    
+    // Формируем заголовок рекламы, удаляя ' PR' и заменяя пробелы на '+'
+    const adTitle = offer.replace(/ PR$/, '').replace(/\s+/g, '+')
 
     try {
+        // Проверяем, если сеть Facebook
         if (network === 'facebook') {
-            return `${update.data}/?adtitle=${adTitle}${process.env.FACEBOOK_URL}`;
+            // Формируем и возвращаем URL для Facebook
+            return `${update.data}/?adtitle=${adTitle}${process.env.FACEBOOK_URL}`
         } else if (network === 'tiktok') {
-            return `${update.data}/?adtitle=${adTitle}${process.env.TIKTOK_URL}`;
+            // Формируем и возвращаем URL для TikTok
+            return `${update.data}/?adtitle=${adTitle}${process.env.TIKTOK_URL}`
         }
 
+        // Логируем информацию о создании URL
         LOG(username, 'Helpers/Base/CreateURL')
     } catch (error) {
+        // Логируем ошибку, если она возникает
         LOG(username, 'Helpers/Base/CreateURL', error)
     }
 }
-//* END - CreateURL
+//* END
 
 
-//* START - UpdateRowData
+//* START
 const UpdateRowData = (ctx, row, update, offer) => {
-    const { username } = ctx.message.from;
-    const updateMap = { status: 0, network: 1 };
+    // Извлекаем имя пользователя, устанавливаем значение по умолчанию 'BOT'
+    const { username = 'BOT' } = ctx.message?.from || ctx.callbackQuery?.from
+    
+    // Словарь для сопоставления типов обновлений с индексами в row._rawData
+    const updateMap = { status: 0, network: 1 }
 
     try {
-
+        // Проверяем, есть ли тип обновления в updateMap
         if (update.type in updateMap) {
-            row._rawData[updateMap[update.type]] = update.data;
-        } else if (update.type === 'href' && (row._rawData[1] === 'facebook' || row._rawData[1] === 'tiktok')) {
-            row._rawData[3] = CreateURL(ctx, update, offer, row._rawData[1])
+            // Обновляем соответствующий индекс в row._rawData
+            row._rawData[updateMap[update.type]] = update.data
+        } 
+        // Проверяем, является ли тип обновления 'href' и сеть Facebook или TikTok
+        else if (update.type === 'href' && (row._rawData[1] === 'facebook' || row._rawData[1] === 'tiktok')) {
+            // Создаем URL и обновляем соответствующее значение в row._rawData
+            row._rawData[5] = CreateURL(ctx, update, offer, row._rawData[1])
+            // Устанавливаем статус в 'Cloudflare'
             row._rawData[0] = 'Cloudflare'
         }
 
+        // Логируем информацию об обновлении данных строки
         LOG(username, 'Helpers/Base/UpdateRowData')
     } catch (error) {
+        // Логируем ошибку, если она возникает
         LOG(username, 'Helpers/Base/UpdateRowData', error)
     }
 }
-//* END - UpdateRowData
+//* END
 
 
-//* START - SendAdminMessage
+//* START
 const SendAdminMessage = async (ctx, username) => {
+    // Отправляем сообщение администратору с указанием пользователя, который отправил новые ссылки
     return await ctx.telegram.sendMessage(process.env.TELEGRAM_ADMIN_ID, `♻️ <b>Новые ссылки от <i>${username}</i>, загружаю...</b>`, {
-        parse_mode: 'HTML'
-    });
+        parse_mode: 'HTML' // Указываем режим разметки HTML
+    })
 }
-//* END - SendAdminMessage
+//* END
 
 
-//* START - EditAdminMessage
+//* START
 const EditAdminMessage = async (ctx, message_id, username, keyboard) => {
+    // Редактируем сообщение администратору с новой информацией о заявке и пользователе
     await ctx.telegram.editMessageText(process.env.TELEGRAM_ADMIN_ID, message_id, null, `♻️ <b>Заявка №${message_id} | Новые ссылки от <i>${username}</i></b>`, {
-        parse_mode: 'HTML',
-        reply_markup: keyboard.reply_markup
-    });
+        parse_mode: 'HTML', // Указываем режим разметки HTML для форматирования текста
+        reply_markup: keyboard.reply_markup // Передаем клавиатуру для редактирования кнопок в сообщении
+    })
 }
-//* END - EditAdminMessage
+//* END
 
 
-//* START - CreateKeyboard
+//* START
 const CreateKeyboard = (id, message_id) => {
+    // Создаем клавиатуру с одной кнопкой для выполнения действия
     return Markup.inlineKeyboard([
+        // Создаем кнопку с текстом '✅ Выполнено', которая отправляет данные с действием 'complite', id и message_id
         Markup.button.callback('✅ Выполнено', JSON.stringify({ action: 'complite', id, message_id }))
-    ]);
+    ])
 }
-//* END - CreateKeyboard
+//* END
 
 
 module.exports = {

@@ -85,7 +85,7 @@ const Request = async (ctx, method, url, token, body, account) => {
         }, token))
 
         // Устанавливаем задержку перед выполнением последовательных действий
-        setTimeout(async () => {
+        // setTimeout(async () => {
             // Отправка запроса
             const response = await fetch(url, {
                 method: method,
@@ -98,7 +98,7 @@ const Request = async (ctx, method, url, token, body, account) => {
 
             LOG(username, 'Helpers/Tonic/Request')
             return await response.json()
-        }, Number(process.env.TONIC_REQUEST_TIMEOUT));
+        // }, Number(process.env.TONIC_REQUEST_TIMEOUT));
     } catch (error) {
         LOG(username, 'Helpers/Tonic/Request', error, ctx)
     }

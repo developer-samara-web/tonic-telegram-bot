@@ -49,22 +49,26 @@ const StatusMiddleware = async (ctx, name) => {
         const sheet_id = await GetUserSheet(ctx)
         // Ищем строку в таблице по указанному имени
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
-        // Получаем аккаунт из строки таблицы
-        const account = sheet_str._rawData[1]
 
-        // Запрашиваем статус
-        const response = await Status(ctx, name, account)
-        // Ищем объект в базе данных по статусу, имени и аккаунту
-        const item = await SearchMiddleware(ctx, response.status, name, account)
-        // Получаем callback для найденного объекта
-        const callback = await GetCallback(ctx, item[0].id, account)
-        // Получаем ключевые слова для найденного объекта
-        const keywords = await GetKeywords(ctx, item[0].id, account)
+        if(sheet_str){
+            // Получаем аккаунт из строки таблицы
+            const account = sheet_str._rawData[1]
+            // Запрашиваем статус
+            const response = await Status(ctx, name, account)
+            // Ищем объект в базе данных по статусу, имени и аккаунту
+            const item = await SearchMiddleware(ctx, response.status, name, account)
+            // Получаем callback для найденного объекта
+            const callback = await GetCallback(ctx, item[0].id, account)
+            // Получаем ключевые слова для найденного объекта
+            const keywords = await GetKeywords(ctx, item[0].id, account)
 
-        // Логируем успешное выполнение функции
-        LOG(username, 'Middlewares/Tonic/StatusMiddleware')
-        // Возвращаем сообщение со статусом
-        return await StatusMessage(ctx, { status: response.status, ...item }, keywords, callback)
+            // Логируем успешное выполнение функции
+            LOG(username, 'Middlewares/Tonic/StatusMiddleware')
+            // Возвращаем сообщение со статусом
+            return await StatusMessage(ctx, { status: response.status, ...item }, keywords, callback)
+        } else {
+            return false
+        }
     } catch (error) {
         // Логируем ошибку, если что-то пошло не так
         LOG(username, 'Middlewares/Tonic/StatusMiddleware', error, ctx)
@@ -115,7 +119,11 @@ const KeywordsMiddleware = async (ctx, { date, company_name }) => {
         // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Tonic/StatsKeywordsMiddleware')
         // Возвращаем сообщение с отфильтрованной статистикой по ключевым словам
-        return await KeywordMessage(ctx, filter)
+        if(filter.length) {
+            return await KeywordMessage(ctx, filter)
+        } else {
+            return false
+        }
     } catch (error) {
         // Логируем ошибку, если что-то пошло не так
         LOG(username, 'Middlewares/Tonic/StatsKeywordsMiddleware', error, ctx)

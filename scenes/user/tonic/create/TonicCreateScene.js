@@ -220,7 +220,7 @@ stageResult.on('message', async (ctx) => {
         if (message) {
             await ctx.replyWithHTML(message)
         } else {
-            await ctx.replyWithHTML(`🚫 <b>Ссылка не найдена.</b>`)
+            await ctx.replyWithHTML(`🚫 <b>Компания не найдена.</b>`)
         }
 
         LOG(username, 'Scenes/User/Tonic/Create/TonicCreateScene/StageResult')

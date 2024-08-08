@@ -299,9 +299,8 @@ const FilterStats = (data, source, compains) => {
 const CreateURL = (ctx, update, offer, network) => {
     // Извлекаем имя пользователя, устанавливаем значение по умолчанию 'BOT'
     const { username = 'BOT' } = ctx.message?.from || ctx.callbackQuery?.from
-    
     // Формируем заголовок рекламы, удаляя ' PR' и заменяя пробелы на '+'
-    const adTitle = offer.replace(/ PR$/, '').replace(/\s+/g, '+')
+    const adTitle = offer.replace(/(?:\s|%20)?PR$/, '').replace(/\s+/g, '+').replace(/%20/g, '+');
 
     try {
         // Проверяем, если сеть Facebook

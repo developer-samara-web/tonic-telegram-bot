@@ -184,7 +184,7 @@ const SetPixelMiddleware = async (ctx, { name, pixel, token, event }) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
         // Получаем идентификатор таблицы
-        const sheet_id = await GetSheet(ctx)
+        const sheet_id = await GetUserSheet(ctx)
         // Ищем строку в таблице по имени
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
         // Получаем аккаунт из найденной строки
@@ -209,7 +209,7 @@ const SetCallbackMiddleware = async (ctx, { name, domain }) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
         // Получаем идентификатор таблицы
-        const sheet_id = await GetSheet(ctx)
+        const sheet_id = await GetUserSheet(ctx)
         // Ищем строку в таблице по имени
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
         // Получаем аккаунт из найденной строки
@@ -234,7 +234,7 @@ const SetKeywordsMiddleware = async (ctx, { name, keywords }) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
         // Получаем идентификатор таблицы
-        const sheet_id = await GetSheet(ctx)
+        const sheet_id = await GetUserSheet(ctx)
         // Ищем строку в таблице по имени
         const sheet_str = await SearchSheet(ctx, sheet_id, name)
         // Получаем аккаунт из найденной строки

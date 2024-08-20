@@ -2,8 +2,8 @@
 
 //* Requires
 const { LOG } = require('@helpers/base')
-const { Bot } = require('@config/telegram')
-const { HasAccess, HasAdminAccess } = require('@helpers/firebase');
+const { Bot } = require('@services/telegram')
+const { HasAccess, HasAdminAccess } = require('@services/firebase');
 const { Markup } = require('telegraf')
 
 

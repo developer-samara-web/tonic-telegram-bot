@@ -2,7 +2,7 @@
 
 //* Requires
 const { LOG } = require('@helpers/base')
-const { HasAdminAccess } = require('@helpers/firebase')
+const { HasAdminAccess } = require('@services/firebase')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
 
 

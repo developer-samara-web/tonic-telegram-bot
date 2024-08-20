@@ -1,10 +1,10 @@
 //? MIDDLEWARES | ADMIN
 
 //* Requires
-const { Bot } = require('@config/telegram')
+const { Bot } = require('@services/telegram')
 const { LOG, Archive } = require('@helpers/base')
 const { AdminMessage } = require('@messages/AdminMessages')
-const { GetFirebaseUsers } = require('@helpers/firebase')
+const { GetFirebaseUsers } = require('@services/firebase')
 const path = require('path')
 
 

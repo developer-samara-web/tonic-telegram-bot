@@ -1,9 +1,26 @@
 //? HELPERS | FIREBASE
 
 //* Requires
-const { DB } = require('@config/firebase')
+const { initializeApp } = require('firebase/app')
+const { getFirestore } = require('firebase/firestore/lite')
 const { setDoc, getDoc, getDocs, deleteDoc, updateDoc, deleteField, doc, collection, query, where } = require('firebase/firestore/lite')
 const { LOG } = require('@helpers/base')
+
+
+//* START
+const app = initializeApp({
+    apiKey: process.env.FIREBASE_APIKEY,
+    authDomain: process.env.FIREBASE_DOMAIN,
+    databaseURL: process.env.FIREBASE_URL,
+    projectId: process.env.FIREBASE_PROJECTID,
+    storageBucket: process.env.FIREBASE_STORAGE,
+    messagingSenderId: process.env.FIREBASE_SENDERID,
+    appId: process.env.FIREBASE_APPID,
+    measurementId: process.env.FIREBASE_MEASUREMENTID
+})
+
+const DB = getFirestore(app)
+//* END
 
 
 //* START

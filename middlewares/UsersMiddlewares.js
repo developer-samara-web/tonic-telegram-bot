@@ -3,7 +3,7 @@
 //* Require
 const { LOG } = require('@helpers/base')
 const { UsersAddMessage, UsersRemoveMessage, UsersListMessage } = require('@messages/UsersMessages')
-const { SetFirebaseUser, DeleteFirebaseUser, GetFirebaseUsers, UpdateUserSheet, UpdateUserDomain } = require('@helpers/firebase')
+const { SetFirebaseUser, DeleteFirebaseUser, GetFirebaseUsers, UpdateUserSheet, UpdateUserDomain } = require('@services/firebase')
 
 
 //* START

@@ -3,7 +3,7 @@
 //* Requires
 const { LOG } = require('@helpers/base')
 const { Scenes: { BaseScene }, Markup } = require('telegraf')
-const { GetFirebaseUser } = require('@helpers/firebase')
+const { GetFirebaseUser } = require('@services/firebase')
 
 
 //* START

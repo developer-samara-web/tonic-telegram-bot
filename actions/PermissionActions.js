@@ -3,7 +3,7 @@
 //* Requires
 const { LOG } = require('@helpers/base')
 const { Markup } = require('telegraf')
-const { GrantAccess, GrantAdminAccess } = require('@helpers/firebase')
+const { GrantAccess, GrantAdminAccess } = require('@services/firebase')
 
 
 //* START

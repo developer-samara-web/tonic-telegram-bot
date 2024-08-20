@@ -5,7 +5,7 @@ require('dotenv').config();
 require('module-alias/register');
 
 //* Requires
-const { Bot } = require('@config/telegram')
+const { Bot } = require('@services/telegram')
 const { Scenes, session } = require('telegraf')
 const { Permissions } = require('@helpers/permissions')
 

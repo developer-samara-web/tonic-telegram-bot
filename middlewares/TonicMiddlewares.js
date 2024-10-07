@@ -244,11 +244,20 @@ const SetKeywordsMiddleware = async (ctx, { name, keywords }) => {
 
         // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Tonic/SetKeywordsMiddleware')
+
         // Устанавливаем ключевые слова и возвращаем результат
-        return await Keywords(ctx, Number(id), keywords, account)
+        const result = await Keywords(ctx, Number(id), keywords ? keywords : null, account)
+
+        // Если результат содержит ошибки, выбрасываем исключение с их содержимым
+        if (Array.isArray(result) && result.length > 0 && typeof result[0] === 'string') {
+            throw new Error(result[0]) // Ловим первую ошибку
+        }
+
+        return result
     } catch (error) {
-        // Логируем ошибку, если что-то пошло не так
-        LOG(username, 'Middlewares/Tonic/SetKeywordsMiddleware', error, ctx)
+        // Логируем ошибку и явно возвращаем null или передаем ошибку
+        LOG(username, 'Middlewares/Tonic/SetKeywordsMiddleware', error.message, ctx)
+        return { error: error.message } // Возвращаем ошибку как объект
     }
 }
 //* END

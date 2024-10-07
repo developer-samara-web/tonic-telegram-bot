@@ -17,6 +17,7 @@ module.exports = [
     require('@scenes/user/tonic/statistics/general/TonicStatisticsScene'),
     require('@scenes/user/tonic/statistics/сompany/TonicCompanyScene'),
     require('@scenes/user/tonic/statistics/keywords/TonicKeywordsScene'),
+    require('@scenes/user/tonic/edits/keywords/TonicDelKeywordsScene'),
 
     //* MEDIA
     require('@scenes/user/media/MediaScene'),

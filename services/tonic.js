@@ -191,15 +191,20 @@ const Keywords = async (ctx, id, keywords, account) => {
         // Формирование URL для запроса ключевых слов
         const url = `${process.env.TONIC_API_URL}/campaign/keywords?campaign_id=${id}`
 
-        LOG(username, 'Helpers/Tonic/Keywords')
-
-        // Выполнение POST-запроса для добавления ключевых слов в кампанию
-        return Request(ctx, 'POST', url, token, {
+        const result = await Request(ctx, 'POST', url, token, {
             campaign_id: id,
-            keywords: keywords,
+            keywords: keywords ? keywords : [],
             country: "US", // Указание страны
-            keyword_amount: keywords.length // Количество ключевых слов
+            keyword_amount: keywords ? keywords.length : 6 // Количество ключевых слов
         }, account)
+
+        LOG(username, 'Helpers/Tonic/Keywords')
+        // Проверяем удалось ли поменять ключи
+        if (result && result.Keywords) {
+            return true
+        } else {
+            return false
+        }
     } catch (error) {
         LOG(username, 'Helpers/Tonic/Keywords', error, ctx)
     }

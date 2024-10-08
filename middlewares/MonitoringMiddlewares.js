@@ -3,8 +3,8 @@
 //* Requires
 const { LOG } = require('@helpers/base')
 const { SearchSheet } = require('@services/sheet')
-const { GetMonitoringList, SetMonitoringItem, GetFirebaseUser } = require('@services/firebase')
-const { MonitoringAddMessage, MonitoringMessage } = require('@messages/MonitoringMessages')
+const { GetMonitoringList, SetMonitoringItem, GetFirebaseUser, DeleteMonitoringItem } = require('@services/firebase')
+const { MonitoringAddMessage, MonitoringMessage, MonitoringRefreshMessage } = require('@messages/MonitoringMessages')
 
 
 //* START
@@ -49,6 +49,71 @@ const MonitoringListAllMiddleware = async (ctx) => {
 }
 //* END
 
+const UpdateMonitoringItemMiddleware = async (ctx, linkName) => {
+    // Извлекаем имя пользователя и идентификатор из контекста сообщения или callback-запроса
+    const { username, id } = ctx.message?.from || ctx.callbackQuery?.from || 'BOT';
+
+    try {
+        // Получаем данные пользователя из Firebase
+        const { sheet, domain } = await GetFirebaseUser(ctx, id);
+        // Ищем данные в таблице на основе определенного статуса мониторинга
+        const sheet_data = await SearchSheet(ctx, sheet, null, process.env.MONITORING_STATUS);
+
+        // Находим элемент мониторинга по названию ссылки (linkName)
+        const itemToUpdate = sheet_data.find(item => item._rawData[2] === linkName);
+
+        if (!itemToUpdate) {
+            ctx.reply(`⚠️ Ссылка с именем "${linkName}" не найдена в таблице.`);
+            return false;
+        }
+
+        // Собираем новые данные для обновления
+        const keywords = [
+            itemToUpdate._rawData[11],
+            itemToUpdate._rawData[12],
+            itemToUpdate._rawData[13],
+            itemToUpdate._rawData[14],
+            itemToUpdate._rawData[15],
+            itemToUpdate._rawData[16],
+        ];
+
+        const newItem = {
+            user: id,
+            name: itemToUpdate._rawData[2],
+            offer: itemToUpdate._rawData[3],
+            country: itemToUpdate._rawData[4],
+            pixel: itemToUpdate._rawData[6] || null,
+            token: itemToUpdate._rawData[7] || null,
+            target: itemToUpdate._rawData[1],
+            event: itemToUpdate._rawData[10] || null,
+            sheet: sheet,
+            domain: domain,
+            tonicDomain: itemToUpdate._rawData[8] || null,
+            keywords: keywords.filter(element => element !== undefined),
+            status: '🔸 В очереди'
+        };
+
+        // Удаляем элемент из мониторинга
+        await DeleteMonitoringItem(ctx, newItem.name);
+
+        // Добавляем элемент снова с новыми данными
+        await SetMonitoringItem(ctx, newItem);
+
+        // Получаем обновленный список для мониторинга
+        const message = await GetMonitoringList(ctx, id);
+        // Обновляем сообщение
+        await MonitoringRefreshMessage(ctx, message, sheet);
+
+        // Логируем успешное выполнение
+        LOG(username, `Messages/Monitoring/UpdateMonitoringItemMiddleware - ${linkName} обновлён`);
+        return true;
+    } catch (error) {
+        // Логируем ошибку
+        LOG(username, 'Messages/Monitoring/UpdateMonitoringItemMiddleware', error, ctx);
+        return false;
+    }
+};
+
 
 //* START
 const SetMonitoringItemMiddleware = async (ctx) => {
@@ -82,6 +147,7 @@ const SetMonitoringItemMiddleware = async (ctx) => {
                 event: item._rawData[10] || null,
                 sheet: sheet,
                 domain: domain,
+                tonicDomain: item._rawData[8] || null,
                 keywords: keywords.filter(element => element !== undefined),
                 status: '🔸 В очереди'
             }
@@ -112,5 +178,6 @@ const SetMonitoringItemMiddleware = async (ctx) => {
 module.exports = { 
     MonitoringListMiddleware,
     MonitoringListAllMiddleware,
-    SetMonitoringItemMiddleware
+    SetMonitoringItemMiddleware,
+    UpdateMonitoringItemMiddleware
 }

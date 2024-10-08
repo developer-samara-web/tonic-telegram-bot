@@ -77,7 +77,7 @@ const Request = async (ctx, method, url, token, body, account) => {
     try {
         // Аутентификация для указанного аккаунта (facebook или tiktok)
         const Reg = await Auth(account)
-        
+
         // Генерация заголовков авторизации
         let headers = await Reg.toHeader(Reg.authorize({
             url: url,
@@ -86,18 +86,18 @@ const Request = async (ctx, method, url, token, body, account) => {
 
         // Устанавливаем задержку перед выполнением последовательных действий
         // setTimeout(async () => {
-            // Отправка запроса
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...headers
-                },
-                body: body ? JSON.stringify(body) : null
-            })
+        // Отправка запроса
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers
+            },
+            body: body ? JSON.stringify(body) : null
+        })
 
-            LOG(username, 'Helpers/Tonic/Request')
-            return await response.json()
+        LOG(username, 'Helpers/Tonic/Request')
+        return await response.json()
         // }, Number(process.env.TONIC_REQUEST_TIMEOUT));
     } catch (error) {
         LOG(username, 'Helpers/Tonic/Request', error, ctx)
@@ -107,18 +107,18 @@ const Request = async (ctx, method, url, token, body, account) => {
 
 
 //* START
-const Create = async (ctx, name, offer, country, account) => {
+const Create = async (ctx, name, offer, country, domain, account) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
 
     try {
         // Получение токена для доступа к API
         const token = await Token(ctx, account)
-        
+
         // Формирование URL для создания кампании
-        const url = `${process.env.TONIC_API_URL}/campaign/create?name=${name}&offer=${offer}&country=${country}&imprint=no`
+        const url = `${process.env.TONIC_API_URL}/campaign/create?name=${name}&offer=${offer}&country=${country}&imprint=no${domain ? '&domain=' + domain : ''}`
 
         LOG(username, 'Requests/Tonic/Create')
-        
+
         // Выполнение POST-запроса для создания кампании
         return Request(ctx, 'POST', url, token, null, account)
     } catch (error) {
@@ -135,12 +135,12 @@ const Status = async (ctx, name, account) => {
     try {
         // Получение токена для доступа к API
         const token = await Token(ctx, account)
-        
+
         // Формирование URL для получения статуса кампании
         const url = `${process.env.TONIC_API_URL}/campaign/status?name=${name}`
 
         LOG(username, 'Helpers/Tonic/Status')
-        
+
         // Выполнение GET-запроса для получения статуса кампании
         return Request(ctx, 'GET', url, token, null, account)
     } catch (error) {
@@ -170,7 +170,7 @@ const Statistics = async (ctx, date) => {
         const responseTT = await Request(ctx, 'GET', url, tokenTiktok, null, 'tiktok')
 
         LOG(username, 'Helpers/Tonic/Statistics');
-        
+
         // Объединение и возврат результатов
         return [...responseFB, ...responseTT]
     } catch (error) {
@@ -219,7 +219,7 @@ const GetKeywords = async (ctx, id, account) => {
     try {
         // Получение токена для указанного аккаунта
         const token = await Token(ctx, account)
-        
+
         // Формирование URL для запроса ключевых слов
         const url = `${process.env.TONIC_API_URL}/campaign/keywords?campaign_id=${id}`
 
@@ -256,7 +256,7 @@ const Callback = async (ctx, id, domain, account) => {
         }));
 
         LOG(username, 'Helpers/Tonic/Callback')
-        
+
         // Проверка, были ли все ответы успешными
         return responses.every(response => response.responseCode === 200)
     } catch (error) {
@@ -275,7 +275,7 @@ const GetCallback = async (ctx, id, account) => {
         const url = `${process.env.TONIC_API_URL}/campaign/callback?campaign_id=${id}`
 
         LOG(username, 'Helpers/Tonic/GetCallback')
-        
+
         // Выполнение GET запроса для получения информации о коллбеке
         return await Request(ctx, 'GET', url, token, null, account)
     } catch (error) {
@@ -328,7 +328,7 @@ const List = async (ctx, status, account) => {
     try {
         // Получение токена для указанного аккаунта
         const token = await Token(ctx, account)
-        
+
         // Формирование строки состояния для запроса
         const state = status ? `state=${status}&` : ''
         const url = `${process.env.TONIC_API_URL}/campaign/list?${state}output=json`
@@ -343,17 +343,17 @@ const List = async (ctx, status, account) => {
 //* END
 
 
-module.exports = { 
-    Auth, 
-    Token, 
-    Request, 
-    Create, 
-    Status, 
-    Statistics, 
-    Keywords, 
+module.exports = {
+    Auth,
+    Token,
+    Request,
+    Create,
+    Status,
+    Statistics,
+    Keywords,
     GetKeywords,
-    Callback, 
-    Pixel, 
+    Callback,
+    Pixel,
     GetCallback,
     List
 }

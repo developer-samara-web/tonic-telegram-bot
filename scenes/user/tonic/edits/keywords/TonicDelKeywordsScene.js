@@ -40,9 +40,7 @@ stageResult.on('message', async (ctx) => {
         await ctx.deleteMessage(message_id)
 
         // Если есть ошибка, выводим её
-        if (result?.error) {
-            await ctx.replyWithHTML(`🚫 <b>Ошибка:</b> ${result.error}`)
-        } else if (result.Keywords) {
+        if (result) {
             await ctx.replyWithHTML(`✅ <b>Ключи удалены.</b>`)
         } else {
             await ctx.replyWithHTML(`🚫 <b>Ключи не удалены.</b>`)

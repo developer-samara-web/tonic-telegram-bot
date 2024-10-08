@@ -386,6 +386,20 @@ const CreateKeyboard = (id, message_id) => {
 //* END
 
 
+//* START
+const DateNow = () => {
+    const options = { timeZone: 'Europe/Moscow', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+
+    // Получаем текущую дату и время в московском часовом поясе
+    const now = new Date();
+    const moscowTime = now.toLocaleTimeString('ru-RU', options);
+
+    // Формируем строку с датой и временем
+    return `${moscowTime}`;
+}
+//* END
+
+
 module.exports = {
     LOG,
     Archive,
@@ -397,5 +411,6 @@ module.exports = {
     DateCurent,
     SendAdminMessage,
     EditAdminMessage,
-    CreateKeyboard
+    CreateKeyboard,
+    DateNow
 }

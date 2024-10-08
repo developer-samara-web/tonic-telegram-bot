@@ -445,18 +445,41 @@ const DeleteMonitoringItem = async (ctx, name) => {
 
 
 //* START
-const UpdateMonitoringItem = async (ctx, name, status) => {
+const UpdateMonitoringItem = async (ctx, name, status, href) => {
     // Получаем имя пользователя из контекста
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     
     try {
         // Получаем ссылку на документ в коллекции 'monitoring'
         const item = doc(DB, 'monitoring', name) 
+        const update = {}
+
+        if (status == '✅ Ссылка готова') {
+            update.status = status;
+        }
+
+        if (status.create) {
+            update.status = status.create;
+        }
+
+        if (status.callback !== undefined) {
+            update.callback_status = status.callback;
+        }
+
+        if (status.pixel !== undefined) {
+            update.pixel_status = status.pixel;
+        }
+
+        if (status.keyword !== undefined) {
+            update.keywords_status = status.keyword;
+        }
+
+        if (href !== undefined) {
+            update.href = href;
+        }
         
         // Обновляем статус документа
-        await updateDoc(item, {
-            status: status 
-        })
+        await updateDoc(item, update) //! Нет данных о статусе при рефреше, пофиксить
 
         // Логируем информацию о выполнении функции
         LOG(username, 'Helpers/Firebase/UpdateMonitoringItem') 

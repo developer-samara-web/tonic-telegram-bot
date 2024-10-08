@@ -9,33 +9,69 @@ const { LoadSheet, SearchSheet } = require('@services/sheet')
 
 
 //* START
-const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, pixel, token, target, event }, mode) => {
+const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, pixel, token, target, event, tonicDomain }) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
+
+    const status = {
+        create: false,
+        keyword: false,
+        callback: false,
+        pixel: false,
+    }
+
     try {
         // Создаем новый объект (StageCreate)
-        const StageCreate = await Create(ctx, encodeURIComponent(name), encodeURIComponent(offer), country, target)
-        // Ищем ID объекта с указанным статусом и именем (StageId)
-        const StageId = await SearchMiddleware(ctx, 'pending', name, target)
-        // Добавляем ключевые слова, если они указаны (StageKeyword)
-        const StageKeyword = keywords ? await Keywords(ctx, Number(StageId[0].id), keywords, target) : false
-        // Настраиваем callback, если указан домен (StageCallback)
-        const StageCallback = domain ? await Callback(ctx, Number(StageId[0].id), domain, target) : false
-        // Настраиваем пиксель, если целевая платформа не Facebook (StagePixel)
-        const StagePixel = target != 'facebook' ? await Pixel(ctx, Number(StageId[0].id), pixel, token, event, target) : false
+        const StageCreate = await Create(ctx, encodeURIComponent(name), encodeURIComponent(offer), country, tonicDomain, target)
+        
+        if (StageCreate === 'Success') {
+            status.create = '🔸 Создаётся'
 
-        // Логируем успешное выполнение функции
-        LOG(username, 'Middlewares/Tonic/CreateMiddleware')
+            // Ищем ID объекта с указанным статусом и именем (StageId)
+            const StageId = await SearchMiddleware(ctx, 'pending', name, target)
 
-        // Если режим mode активен, возвращаем true
-        if (mode) {
-            return true
+            // Добавляем ключевые слова, если они указаны (StageKeyword)
+            if (keywords) {
+                const StageKeyword = await Keywords(ctx, Number(StageId[0].id), keywords, target)
+                status.keyword = StageKeyword.KeywordSetId ? true : false
+            }
+
+            // Настраиваем callback, если указан домен (StageCallback)
+            if (domain) {
+                const StageCallback = await Callback(ctx, Number(StageId[0].id), domain, target)
+                status.callback = StageCallback
+            }
+
+            // Настраиваем пиксель, если целевая платформа не Facebook (StagePixel)
+            if (target !== 'facebook') {
+                const StagePixel = await Pixel(ctx, Number(StageId[0].id), pixel, token, event, target)
+                status.pixel = StagePixel.success ? true : false
+            }
+
+            // Логируем успешное выполнение функции
+            LOG(username, 'Middlewares/Tonic/CreateMiddleware')
+            return status
+
         } else {
-            // В противном случае отправляем сообщение о создании
-            return await CreateMessage(ctx, name, StageCreate, StageId, StageKeyword, StageCallback, StagePixel)
+            switch (StageCreate){
+                case 'Invalid TLD, allowed are: bond':
+                    status.create = 'На найден .bond в домене.'
+                    break
+                case 'The campaign name is already in use please choose another one':
+                    status.create = 'Компания с таким именем уже существует.'
+                    break
+                case 'Forbidden characters in domain name':
+                    status.create = 'Запрещённые символы в домене.'
+                    break
+                default:
+                    status.create = StageCreate
+                    break
+            }
+            return status
         }
     } catch (error) {
         // Логируем ошибку, если что-то пошло не так
         LOG(username, 'Middlewares/Tonic/CreateMiddleware', error, ctx)
+        return false
     }
 }
 //* END
@@ -244,7 +280,6 @@ const SetKeywordsMiddleware = async (ctx, { name, keywords }) => {
 
         // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Tonic/SetKeywordsMiddleware')
-
         // Устанавливаем ключевые слова и возвращаем результат
         const result = await Keywords(ctx, Number(id), keywords ? keywords : null, account)
 

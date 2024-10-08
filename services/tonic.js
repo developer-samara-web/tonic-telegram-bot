@@ -181,7 +181,7 @@ const Statistics = async (ctx, date) => {
 
 
 //* START
-const Keywords = async (ctx, id, keywords, account) => {
+const Keywords = async (ctx, id, keywords, account, country = 'US') => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
 
     try {
@@ -194,7 +194,7 @@ const Keywords = async (ctx, id, keywords, account) => {
         const result = await Request(ctx, 'POST', url, token, {
             campaign_id: id,
             keywords: keywords ? keywords : [],
-            country: "US", // Указание страны
+            country: country, // Указание страны
             keyword_amount: keywords ? keywords.length : 6 // Количество ключевых слов
         }, account)
 

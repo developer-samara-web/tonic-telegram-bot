@@ -278,10 +278,12 @@ const SetKeywordsMiddleware = async (ctx, { name, keywords }) => {
         // Ищем объект по имени и аккаунту
         const [{ id }] = await SearchMiddleware(ctx, null, name, account)
 
+        const country = name.split('_')
+
         // Логируем успешное выполнение функции
         LOG(username, 'Middlewares/Tonic/SetKeywordsMiddleware')
         // Устанавливаем ключевые слова и возвращаем результат
-        const result = await Keywords(ctx, Number(id), keywords ? keywords : null, account)
+        const result = await Keywords(ctx, Number(id), keywords ? keywords : null, account, country[1])
 
         // Если результат содержит ошибки, выбрасываем исключение с их содержимым
         if (Array.isArray(result) && result.length > 0 && typeof result[0] === 'string') {

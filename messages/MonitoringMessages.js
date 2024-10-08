@@ -42,7 +42,7 @@ const MonitoringAddMessage = async (ctx, message) => {
         // Отправляем сформированное сообщение в чат, с кнопками для взаимодействия
         await ctx.replyWithHTML(result, message.length ? Markup.inlineKeyboard([
             Markup.button.callback('▶️ Отправить', 'create_monitoring'), // Кнопка для отправки мониторинга
-            Markup.button.callback('🚫 Отменить', 'delete_monitoring') // Кнопка для отмены действия
+            Markup.button.callback('🚫 Отменить', 'clear_monitoring') // Кнопка для отмены действия
         ]) : null)
 
         // Логируем информацию о вызове функции

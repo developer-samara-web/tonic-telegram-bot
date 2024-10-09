@@ -32,7 +32,7 @@ const CreateMiddleware = async (ctx, { name, offer, country, keywords, domain, p
             // Добавляем ключевые слова, если они указаны (StageKeyword)
             if (keywords) {
                 const StageKeyword = await Keywords(ctx, Number(StageId[0].id), keywords, target)
-                status.keyword = StageKeyword.KeywordSetId ? true : false
+                status.keyword = StageKeyword
             }
 
             // Настраиваем callback, если указан домен (StageCallback)

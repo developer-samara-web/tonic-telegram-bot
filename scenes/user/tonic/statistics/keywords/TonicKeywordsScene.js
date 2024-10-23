@@ -36,7 +36,8 @@ stageDate.on('text', async (ctx) => {
         await ctx.replyWithHTML('2️⃣ <b>Укажите дату статистики:</b>\n( Пример: 2024-04-01:2024-05-01 )',
             Markup.keyboard([
                 ['Сегодня', 'Вчера', 'За 3 дня'],
-                ['За неделю', 'За месяц']
+                ['За неделю', 'За месяц'],
+                [ username === 'IcoNOproblem' ? 'За всё время' : '' ]
             ]).resize().oneTime())
 
         LOG(username, 'Scenes/User/Tonic/Statistics/Keywords/TonicKeywordsScene/StageDate')

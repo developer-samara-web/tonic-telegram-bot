@@ -1,7 +1,7 @@
 //? MIDDLEWARES | TONIC
 
 //* Requires
-const { LOG, GroupByDate, CalculateStatistics, FilterKeyword, FilterStats } = require('@helpers/base')
+const { LOG, GroupByDate, CalculateStatistics, FilterKeyword, FilterStats, StatisticsInFile } = require('@helpers/base')
 const { Create, Keywords, GetKeywords, Callback, GetCallback, Pixel, Status, Statistics, List } = require('@services/tonic')
 const { StatusMessage, StatisticsMessage, KeywordMessage, CreateMessage, CompanyMessage } = require('@messages/TonicMessages')
 const { GetUserSheet } = require('@services/firebase')
@@ -147,8 +147,13 @@ const StatisticsMiddleware = async (ctx, { date, source }) => {
 const KeywordsMiddleware = async (ctx, { date, company_name }) => {
     const username = ctx.message?.from?.username || ctx.callbackQuery?.from?.username || 'BOT'
     try {
+        let response = []
         // Запрашиваем статистику за указанный период
-        const response = await Statistics(ctx, date)
+        if (date === 'За всё время') {
+            response = await StatisticsInFile()
+        } else {
+            response = await Statistics(ctx, date)
+        }
         // Фильтруем статистику по названию компании
         const filter = FilterKeyword(response, company_name)
 

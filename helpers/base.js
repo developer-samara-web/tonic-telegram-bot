@@ -1,9 +1,10 @@
 //? HELPERS | BASE
 
 //* Requires
-const fs = require('fs');
-const archiver = require('archiver');
-const path = require('path');
+const fs = require('fs')
+const archiver = require('archiver')
+const path = require('path')
+const csv = require('csv-parser')
 const { Markup } = require('telegraf')
 
 
@@ -31,8 +32,8 @@ const LOG = async (user, object, error, ctx) => {
         // Если произошла ошибка, отправляем сообщение админу в Telegram
         if (error) {
             await ctx.telegram.sendMessage(
-                process.env.TELEGRAM_ADMIN_ID, 
-                `🚫  <b>Ошибка от ${user}:</b>\n${error}\n\n<b>🔸  Функция:</b>\n[${object}]\n\n<b>🔸  Подробнее:</b>\n${error.stack}`, 
+                process.env.TELEGRAM_ADMIN_ID,
+                `🚫  <b>Ошибка от ${user}:</b>\n${error}\n\n<b>🔸  Функция:</b>\n[${object}]\n\n<b>🔸  Подробнее:</b>\n${error.stack}`,
                 { parse_mode: 'HTML' }
             )
         }
@@ -262,10 +263,10 @@ const CreateStatsItem = (item) => {
 const UpdateStatsItem = (existingItem, item) => {
     // Обновляем количество кликов, складывая существующее и новое значение
     existingItem.clicks = String(Number(existingItem.clicks) + Number(item.clicks))
-    
+
     // Обновляем общий доход, складывая существующий и новый доход, затем округляем до двух знаков
     existingItem.revenueUsd = (parseFloat(existingItem.revenueUsd) + parseFloat(item.revenueUsd)).toFixed(2)
-    
+
     // Вычисляем CPC (стоимость за клик) как отношение общего дохода к количеству кликов и округляем до двух знаков
     existingItem.CPC = (existingItem.revenueUsd / existingItem.clicks).toFixed(2)
 }
@@ -326,7 +327,7 @@ const CreateURL = (ctx, update, offer, network) => {
 const UpdateRowData = (ctx, row, update, offer) => {
     // Извлекаем имя пользователя, устанавливаем значение по умолчанию 'BOT'
     const { username = 'BOT' } = ctx.message?.from || ctx.callbackQuery?.from
-    
+
     // Словарь для сопоставления типов обновлений с индексами в row._rawData
     const updateMap = { status: 0, network: 1 }
 
@@ -335,7 +336,7 @@ const UpdateRowData = (ctx, row, update, offer) => {
         if (update.type in updateMap) {
             // Обновляем соответствующий индекс в row._rawData
             row._rawData[updateMap[update.type]] = update.data
-        } 
+        }
         // Проверяем, является ли тип обновления 'href' и сеть Facebook или TikTok
         else if (update.type === 'href' && (row._rawData[1] === 'facebook' || row._rawData[1] === 'tiktok')) {
             // Создаем URL и обновляем соответствующее значение в row._rawData
@@ -400,6 +401,52 @@ const DateNow = () => {
 //* END
 
 
+//* START
+const parseCSVFile = (filePath) => {
+    return new Promise((resolve, reject) => {
+        const tempResults = []
+        fs.createReadStream(filePath)
+            .pipe(csv())
+            .on('data', (data) => tempResults.push(data))
+            .on('end', () => resolve(tempResults))
+            .on('error', (error) => reject(error))
+    })
+}
+//* END
+
+
+//* START
+const StatisticsInFile = async () => {
+    let results = []
+    const directoryPath = path.join(__dirname, '../database')
+
+    // Оборачиваем fs.readdir в Promise
+    const csvFiles = await new Promise((resolve, reject) => {
+        fs.readdir(directoryPath, (err, files) => {
+            if (err) return reject('Ошибка чтения директории:', err)
+            // Фильтруем только файлы с расширением .csv
+            resolve(files.filter(file => file.endsWith('.csv')))
+        })
+    })
+
+    for (const file of csvFiles) {
+        const filePath = path.join(directoryPath, file)
+        const fileData = await parseCSVFile(filePath)
+        results = results.concat(fileData)
+    }
+
+    // Форматируем данные в нужный формат
+    return results.map(row => ({
+        date: row.date,
+        campaign_name: row.campaign_name,
+        clicks: row.clicks,
+        revenueUsd: row.revenueUsd,
+        keyword: row.keyword,
+        network: row.network
+    }))
+}
+//* END
+
 module.exports = {
     LOG,
     Archive,
@@ -412,5 +459,6 @@ module.exports = {
     SendAdminMessage,
     EditAdminMessage,
     CreateKeyboard,
-    DateNow
+    DateNow,
+    StatisticsInFile
 }

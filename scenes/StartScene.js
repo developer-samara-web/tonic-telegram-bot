@@ -20,7 +20,7 @@ StartScene.enter(async (ctx) => {
                 parse_mode: 'Markdown',
                 reply_markup: {
                     keyboard: [
-                        ['🔹 Tonic'],
+                        ['🔹 Tonic', '🔹 ClickFlare'],
                         ['📝 Генераторы', '🖼 Уникализаторы'],
                         [ admin ? '⚙️ Панель управления' : '⚙️ Настройки']
                     ],

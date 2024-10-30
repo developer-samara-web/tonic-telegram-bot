@@ -19,6 +19,10 @@ module.exports = [
     require('@scenes/user/tonic/statistics/keywords/TonicKeywordsScene'),
     require('@scenes/user/tonic/edits/keywords/TonicDelKeywordsScene'),
 
+    //* CLICKFLARE
+    require('@scenes/user/clickflare/ClickflareScene'),
+    require('@scenes/user/clickflare/generate/ClickflareGenerateScene'),
+
     //* MEDIA
     require('@scenes/user/media/MediaScene'),
     require('@scenes/user/media/photo/MediaUnifierPhotoScene'),

@@ -447,6 +447,32 @@ const StatisticsInFile = async () => {
 }
 //* END
 
+
+//* START
+const generateCSVData = async (data, keywords, length) => {
+    const result = []
+    data.forEach(item => {
+        for (let i = 0; i < length; i++) {
+            // Создаем новый объект с нужными полями и добавляем в результат
+            result.push({
+                name: `${item.name}_${i + 1}`,
+                url: `${item.url}${keywords[i] != '-' ? keywords[i] : ''}`,
+                direct: false,
+                affiliateNetworkName: item.affiliateNetworkName,
+                notes: '',
+                staticUrl: '',
+                payout: '',
+                currency: '',
+                keywords: ''
+            })
+        }
+    })
+
+    return result
+}
+//* END
+
+
 module.exports = {
     LOG,
     Archive,
@@ -460,5 +486,6 @@ module.exports = {
     EditAdminMessage,
     CreateKeyboard,
     DateNow,
-    StatisticsInFile
+    StatisticsInFile,
+    generateCSVData
 }

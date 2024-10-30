@@ -5,6 +5,7 @@ const { UsersListMiddleware } = require('@middlewares/UsersMiddlewares')
 const { AdminLogsMiddleware } = require('@middlewares/AdminMiddlewares')
 const { Permissions, PermissionsAdmin, PermissionsAccess, PermissionsAdminAccess } = require('@helpers/permissions')
 const { MonitoringListAllMiddleware, SetMonitoringItemMiddleware } = require('@middlewares/MonitoringMiddlewares')
+const { CreateOffersCSV } = require('@middlewares/ClickflareMiddlewares')
 
 
 module.exports = Bot => {
@@ -29,6 +30,10 @@ module.exports = Bot => {
     Bot.hears('🔹 Управление', ctx => Permissions(ctx, 'tonic-edits'))
     Bot.hears('🔹 Статус компании', ctx => Permissions(ctx, 'TonicStatusWizard'))
     Bot.hears('🔹 Статистика', ctx => Permissions(ctx, 'tonic-stats'))
+
+    //* CLICKFLARE
+    Bot.hears('🔹 ClickFlare', ctx => Permissions(ctx, 'clickflare'))
+    Bot.hears('🔹 Генерация офферов', ctx => Permissions(ctx, 'ClickflareGenerateWizard'))
 
     //* TONIC EDITS
     Bot.hears('🔹 Добавить пиксель', ctx => Permissions(ctx, 'TonicPixelWizard'))

@@ -458,7 +458,7 @@ const generateCSVData = async (data, keywords, length) => {
                 name: `${item.name}_${i + 1}`,
                 url: `${item.url}${keywords[i] != '-' ? keywords[i] : ''}`,
                 direct: false,
-                affiliateNetworkName: item.affiliateNetworkName,
+                affiliateNetworkName: 'TONIC',
                 notes: '',
                 staticUrl: '',
                 payout: '',

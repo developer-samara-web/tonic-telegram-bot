@@ -14,7 +14,7 @@ MonitoringScene.enter(async (ctx) => {
     
     try {
         await ctx.replyWithHTML(`<b>❇️  MONITORING PANEL |</b> Выберите действие:`, Markup.keyboard([
-            admin ? ['🔹 Компании в работе', '🔹 Обновить'] : ['🔺 Повысить права'],
+            admin ? ['🔹 Компании в работе', '🔹 Очистить'] : ['🔺 Повысить права'],
             ['⬅️ В меню управления'],
         ]).resize().oneTime());
         

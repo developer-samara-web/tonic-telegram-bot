@@ -4,7 +4,7 @@
 const { Bot } = require('@services/telegram')
 const { LOG, Archive } = require('@helpers/base')
 const { AdminMessage } = require('@messages/AdminMessages')
-const { GetFirebaseUsers } = require('@services/firebase')
+const { GetFirebaseUsers, GetMonitoringList, DeleteMonitoringItem } = require('@services/firebase')
 const path = require('path')
 
 
@@ -66,8 +66,36 @@ const AdminLogsMiddleware = async (ctx) => {
 }
 //* END
 
+//* START
+const AdminClearMonitoringMiddleware = async (ctx) => {
+    // Получаем имя пользователя из контекста
+    const { username } = ctx.message?.from || ctx.callbackQuery?.from || 'BOT'
+
+    try {
+
+        const items = await GetMonitoringList(ctx)
+        
+        for (const item of items) {
+            await DeleteMonitoringItem(ctx, item.name)
+        }
+
+        await ctx.replyWithHTML(`✅  Очередь обновлена успешно.`);
+
+        // Логируем выполнение функции
+        LOG(username, 'Middlewares/Admin/AdminLogsMiddleware')
+    } catch (error) {
+        // Логируем ошибку
+        LOG(username, 'Middlewares/Admin/AdminLogsMiddleware', error, ctx)
+    } finally {
+        // Переходим в сцену администратора
+        return ctx.scene.enter('monitoring')
+    }
+}
+//* END
+
 
 module.exports = { 
     AdminMessageMiddleware, 
-    AdminLogsMiddleware 
+    AdminLogsMiddleware,
+    AdminClearMonitoringMiddleware
 }

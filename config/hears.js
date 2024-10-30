@@ -2,7 +2,7 @@
 
 //* Requires
 const { UsersListMiddleware } = require('@middlewares/UsersMiddlewares')
-const { AdminLogsMiddleware } = require('@middlewares/AdminMiddlewares')
+const { AdminLogsMiddleware, AdminClearMonitoringMiddleware } = require('@middlewares/AdminMiddlewares')
 const { Permissions, PermissionsAdmin, PermissionsAccess, PermissionsAdminAccess } = require('@helpers/permissions')
 const { MonitoringListAllMiddleware, SetMonitoringItemMiddleware } = require('@middlewares/MonitoringMiddlewares')
 const { CreateOffersCSV } = require('@middlewares/ClickflareMiddlewares')
@@ -59,6 +59,7 @@ module.exports = Bot => {
     Bot.hears(['⚙️ Панель управления', '⬅️ В меню управления'], ctx => PermissionsAdmin(ctx, 'admin'))
     Bot.hears('🔹 Отправить сообщение', ctx => PermissionsAdmin(ctx, 'AdminMessageWizard'))
     Bot.hears('🔹 Запросить логи', ctx => PermissionsAdmin(ctx, null, AdminLogsMiddleware))
+    Bot.hears('🔹 Очистить', ctx => PermissionsAdmin(ctx, null, AdminClearMonitoringMiddleware))
     Bot.hears('🔹 Мониторинг', ctx => PermissionsAdmin(ctx, 'monitoring'))
 
     //* ADMIN USERS

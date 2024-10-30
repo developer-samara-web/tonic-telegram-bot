@@ -363,10 +363,9 @@ const GetMonitoringList = async (ctx, id) => {
         // Получаем ссылку на коллекцию 'monitoring' в Firestore
         const cols = collection(DB, 'monitoring')
         // Создаем запрос для фильтрации документов по полю 'user', равному переданному id
-        const q = query(cols, where('user', '==', id))
+        const q = id ? query(cols, where('user', '==', id)) : query(cols)
         // Выполняем запрос и получаем результаты
         const snapshot = await getDocs(q)
-
         // Логируем успешное выполнение функции
         LOG(username, 'Helpers/Firebase/GetMonitoringList')
         // Возвращаем массив данных всех найденных документов
